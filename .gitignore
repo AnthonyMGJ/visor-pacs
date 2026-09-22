@@ -1,0 +1,24 @@
+# Secretos
+.env
+*.pem
+*.key
+
+# Backend
+backend/target/
+*.class
+
+# Frontend (cuando exista)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Imágenes médicas: NUNCA subir estudios de pacientes reales.
+# Solo se permiten las imágenes sintéticas de la carpeta "sinteticos".
+*.dcm
+!docker/sample-dicom/sinteticos/*.dcm

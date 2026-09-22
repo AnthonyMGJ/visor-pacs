@@ -1,0 +1,82 @@
+# Entorno de desarrollo del Visor PACS (Sprint 1)
+# Uso:  docker compose up -d --build
+# Requiere un archivo .env (copiar de .env.example).
+name: visor-pacs
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-visor_pacs}
+      MYSQL_USER: ${DB_USER:?Falta DB_USER en .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Falta DB_PASSWORD en .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Falta DB_ROOT_PASSWORD en .env}
+      TZ: UTC
+    ports:
+      - "127.0.0.1:3306:3306"   # solo accesible desde tu propia máquina
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks: [pacs-net]
+
+  orthanc:
+    # TODO (equipo): fijar una versión concreta después de la primera corrida exitosa
+    # (por ejemplo, orthancteam/orthanc:<versión>), para que todos usen la misma.
+    image: orthancteam/orthanc:latest
+    restart: unless-stopped
+    environment:
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC_JSON: |
+        {
+          "Name": "Visor PACS",
+          "AuthenticationEnabled": true,
+          "RemoteAccessAllowed": true,
+          "RegisteredUsers": { "${ORTHANC_USER:?Falta ORTHANC_USER en .env}": "${ORTHANC_PASSWORD:?Falta ORTHANC_PASSWORD en .env}" },
+          "DicomWeb": { "Enable": true, "Root": "/dicom-web/" }
+        }
+    ports:
+      - "127.0.0.1:8042:8042"   # solo tu máquina; el celular NUNCA habla directo con Orthanc
+    volumes:
+      - orthanc_data:/var/lib/orthanc/db
+    networks: [pacs-net]
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      orthanc:
+        condition: service_started
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-visor_pacs}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ORTHANC_URL: http://orthanc:8042
+      ORTHANC_USER: ${ORTHANC_USER}
+      ORTHANC_PASSWORD: ${ORTHANC_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Falta JWT_SECRET en .env}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+      BOOTSTRAP_ENABLED: ${BOOTSTRAP_ENABLED:-false}
+      BOOTSTRAP_USERNAME: ${BOOTSTRAP_USERNAME:-}
+      BOOTSTRAP_PASSWORD: ${BOOTSTRAP_PASSWORD:-}
+    ports:
+      - "8080:8080"             # accesible desde la red Wi-Fi para probar con el celular
+    networks: [pacs-net]
+
+  # frontend:  (se agrega en cuanto exista el proyecto Angular)
+
+volumes:
+  mysql_data:
+  orthanc_data:
+
+networks:
+  pacs-net:
