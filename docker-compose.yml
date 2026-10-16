@@ -64,15 +64,18 @@ services:
       ORTHANC_USER: ${ORTHANC_USER}
       ORTHANC_PASSWORD: ${ORTHANC_PASSWORD}
       JWT_SECRET: ${JWT_SECRET:?Falta JWT_SECRET en .env}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
       BOOTSTRAP_ENABLED: ${BOOTSTRAP_ENABLED:-false}
       BOOTSTRAP_USERNAME: ${BOOTSTRAP_USERNAME:-}
       BOOTSTRAP_PASSWORD: ${BOOTSTRAP_PASSWORD:-}
+      BOOTSTRAP_PACIENTE_USERNAME: ${BOOTSTRAP_PACIENTE_USERNAME:-}
+      BOOTSTRAP_PACIENTE_PASSWORD: ${BOOTSTRAP_PACIENTE_PASSWORD:-}
+      BOOTSTRAP_PACIENTE_DICOM_ID: ${BOOTSTRAP_PACIENTE_DICOM_ID:-PRUEBA-0001}
     ports:
       - "8080:8080"             # accesible desde la red Wi-Fi para probar con el celular
     networks: [pacs-net]
 
-  # frontend:  (se agrega en cuanto exista el proyecto Angular)
+  # frontend:  (se agrega en cuanto exista el proyecto React)
 
 volumes:
   mysql_data:
