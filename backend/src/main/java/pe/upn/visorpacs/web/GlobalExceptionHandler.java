@@ -1,5 +1,6 @@
 package pe.upn.visorpacs.web;
 
+import pe.upn.visorpacs.dicomweb.StudyAccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDicomWebPathException.class)
     public ProblemDetail rutaInvalida() {
         return problema(HttpStatus.BAD_REQUEST, "Ruta no permitida", "La ruta DICOMweb solicitada no es válida.");
+    }
+
+    @ExceptionHandler(StudyAccessDeniedException.class)
+    public ProblemDetail accesoDenegado() {
+        return problema(HttpStatus.FORBIDDEN, "Acceso denegado", "No tienes permiso para ver este estudio.");
     }
 
     @ExceptionHandler(RestClientException.class)

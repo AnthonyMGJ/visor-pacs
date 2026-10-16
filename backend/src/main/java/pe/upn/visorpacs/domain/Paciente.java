@@ -29,6 +29,13 @@ public class Paciente {
 
     protected Paciente() {}
 
+    public static Paciente nuevo(String dicomPacienteId, String nombres) {
+        Paciente p = new Paciente();
+        p.dicomPacienteId = dicomPacienteId;
+        p.nombres = nombres;
+        return p;
+    }
+
     public Integer getId() { return id; }
     public String getDicomPacienteId() { return dicomPacienteId; }
     public String getNombres() { return nombres; }

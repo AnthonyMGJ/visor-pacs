@@ -43,6 +43,11 @@ public class Usuario {
     @JoinColumn(name = "id_rol", nullable = false)
     private Rol rol;
 
+    /** Solo para usuarios con rol PACIENTE: su registro de paciente (define qué estudios puede ver). */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_paciente")
+    private Paciente paciente;
+
     protected Usuario() {}
 
     public static Usuario nuevo(String username, String passwordHash, String nombres,
@@ -54,6 +59,13 @@ public class Usuario {
         u.apellidos = apellidos;
         u.email = email;
         u.rol = rol;
+        return u;
+    }
+
+    public static Usuario nuevoPaciente(String username, String passwordHash, String nombres,
+                                        String apellidos, String email, Rol rol, Paciente paciente) {
+        Usuario u = nuevo(username, passwordHash, nombres, apellidos, email, rol);
+        u.paciente = paciente;
         return u;
     }
 
@@ -88,4 +100,5 @@ public class Usuario {
     public LocalDateTime getBloqueadoHasta() { return bloqueadoHasta; }
     public void setBloqueadoHasta(LocalDateTime t) { this.bloqueadoHasta = t; }
     public Rol getRol() { return rol; }
+    public Paciente getPaciente() { return paciente; }
 }

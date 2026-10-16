@@ -6,4 +6,8 @@ import pe.upn.visorpacs.domain.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByUsername(String username);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPacienteId(Integer idPaciente);
 }

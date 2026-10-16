@@ -50,7 +50,7 @@ app:
     username: ${ORTHANC_USER}
     password: ${ORTHANC_PASSWORD}
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
   bootstrap:
     enabled: ${BOOTSTRAP_ENABLED:false}
     username: ${BOOTSTRAP_USERNAME:}
@@ -58,3 +58,7 @@ app:
     nombres: Médico
     apellidos: de Prueba
     email: medico.prueba@example.com
+    paciente-username: ${BOOTSTRAP_PACIENTE_USERNAME:}
+    paciente-password: ${BOOTSTRAP_PACIENTE_PASSWORD:}
+    paciente-dicom-id: ${BOOTSTRAP_PACIENTE_DICOM_ID:PRUEBA-0001}
+    paciente-nombres: Paciente

@@ -11,5 +11,7 @@ public record AppProperties(Jwt jwt, Security security, Orthanc orthanc, Cors co
     public record Orthanc(String baseUrl, String username, String password) {}
     public record Cors(List<String> allowedOrigins) {}
     public record Bootstrap(boolean enabled, String username, String password,
-                            String nombres, String apellidos, String email) {}
+                            String nombres, String apellidos, String email,
+                            String pacienteUsername, String pacientePassword,
+                            String pacienteDicomId, String pacienteNombres) {}
 }

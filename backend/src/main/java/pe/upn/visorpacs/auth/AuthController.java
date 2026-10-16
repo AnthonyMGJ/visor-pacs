@@ -20,7 +20,8 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         IssuedToken token = authService.login(request.username().trim(), request.password());
-        return new LoginResponse(token.value(), "Bearer", token.expiresInSeconds());
+        return new LoginResponse(token.value(), "Bearer", token.expiresInSeconds(),
+                token.rol(), token.nombre());
     }
 
     /** Sin estado: el frontend descarta el token. La revocación en servidor llega en el Sprint 3 (HU08). */

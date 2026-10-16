@@ -43,8 +43,8 @@ class AuthServiceTest {
                 new AppProperties.Jwt("x", "visor-pacs", 15),
                 new AppProperties.Security(3, 15), // 3 intentos para acortar las pruebas
                 new AppProperties.Orthanc("http://orthanc:8042", "u", "p"),
-                new AppProperties.Cors(List.of("http://localhost:4200")),
-                new AppProperties.Bootstrap(false, "", "", "", "", ""));
+                new AppProperties.Cors(List.of("http://localhost:5173")),
+                new AppProperties.Bootstrap(false, "", "", "", "", "", "", "", "", ""));
         servicio = new AuthService(usuarios, encoder, jwtService, props, clock);
         medico = Usuario.nuevo("medico.demo", encoder.encode(CLAVE), "Ana", "Pérez",
                 "ana@example.com", new Rol("MEDICO"));
@@ -58,7 +58,7 @@ class AuthServiceTest {
     void accesoValidoEmiteTokenYReiniciaIntentos() {
         medico.setIntentosFallidos(2);
         when(usuarios.findByUsername("medico.demo")).thenReturn(Optional.of(medico));
-        when(jwtService.issue(medico)).thenReturn(new IssuedToken("tok", 900));
+        when(jwtService.issue(medico)).thenReturn(new IssuedToken("tok", 900, "MEDICO", "Ana Pérez"));
 
         IssuedToken token = servicio.login("medico.demo", CLAVE);
 
@@ -103,7 +103,7 @@ class AuthServiceTest {
     void bloqueoVencidoPermiteIngresar() {
         medico.setBloqueadoHasta(ahora().minusMinutes(1));
         when(usuarios.findByUsername("medico.demo")).thenReturn(Optional.of(medico));
-        when(jwtService.issue(medico)).thenReturn(new IssuedToken("tok", 900));
+        when(jwtService.issue(medico)).thenReturn(new IssuedToken("tok", 900, "MEDICO", "Ana Pérez"));
 
         servicio.login("medico.demo", CLAVE);
 
