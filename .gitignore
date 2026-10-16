@@ -10,7 +10,6 @@ backend/target/
 # Frontend (cuando exista)
 frontend/node_modules/
 frontend/dist/
-frontend/.angular/
 
 # IDEs
 .idea/

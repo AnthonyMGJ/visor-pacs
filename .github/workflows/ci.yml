@@ -22,4 +22,4 @@ jobs:
       - name: Compilar y ejecutar pruebas
         run: mvn -B verify
 
-  # frontend:  (se agrega cuando exista el proyecto Angular)
+  # frontend:  (se agrega cuando exista el proyecto React)

@@ -29,6 +29,18 @@
     {
       "key": "token",
       "value": ""
+    },
+    {
+      "key": "pacienteUsername",
+      "value": "paciente.demo"
+    },
+    {
+      "key": "pacientePassword",
+      "value": "PON_AQUI_LA_CLAVE_DEL_PACIENTE"
+    },
+    {
+      "key": "tokenPaciente",
+      "value": ""
     }
   ],
   "item": [
@@ -260,6 +272,88 @@
             "type": "text/javascript",
             "exec": [
               "pm.test('204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Login paciente -> 200, rol PACIENTE y guarda token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"{{pacienteUsername}}\",\"password\":\"{{pacientePassword}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200 y rol PACIENTE\",()=>{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenPaciente}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Paciente: /series suelto -> 403",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{tokenPaciente}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/series"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"403\",()=>pm.response.to.have.status(403));"
             ]
           }
         }
