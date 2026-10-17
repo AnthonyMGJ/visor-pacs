@@ -2,8 +2,8 @@
   "collection": {
     "item": [
       {
-        "id": "6098ee0d-883e-4e81-8cd4-a8d05e4d6f7a",
-        "name": "01 Health (pÃºblico) -> 200",
+        "id": "ee7edd34-c32e-46fb-9a2a-8eb59c1b0096",
+        "name": "01 Health (público) -> 200",
         "request": {
           "url": {
             "path": [
@@ -27,18 +27,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "eb004791-0d97-4663-a677-57962d89e9a9",
+              "id": "e8c8ae0c-c99e-4e66-b3a2-0ddbd3bc162c",
               "type": "text/javascript",
               "exec": [
                 "pm.test('200', () => pm.response.to.have.status(200));"
               ],
-              "_lastExecutionId": "16d4dc79-c7c4-4cf8-9eec-8394bab4366c"
+              "_lastExecutionId": "c4b8facf-daa5-44c8-ace1-e8eae7a254ff"
             }
           }
         ]
       },
       {
-        "id": "8e4c89fb-d3ff-4789-baaa-b365b0586df6",
+        "id": "db926c4e-aa46-49e1-aefd-b216c593c23d",
         "name": "02 Login correcto -> 200 y guarda el token",
         "request": {
           "url": {
@@ -74,19 +74,19 @@
           {
             "listen": "test",
             "script": {
-              "id": "bcf5c05f-987e-4fd6-b1d4-a84c63f1b8c5",
+              "id": "7ee3b835-252e-4607-b8d7-1ebcda6208e5",
               "type": "text/javascript",
               "exec": [
                 "pm.test('200', () => pm.response.to.have.status(200));",
                 "pm.collectionVariables.set('token', pm.response.json().accessToken);"
               ],
-              "_lastExecutionId": "41063b1d-02a3-490b-8c21-b391e3fe3e1c"
+              "_lastExecutionId": "c38f6f38-2127-4670-951e-102517dc4dca"
             }
           }
         ]
       },
       {
-        "id": "54f8de3e-eaa4-45bd-a70b-b58b316eb434",
+        "id": "d2a711fb-da86-4fbf-a82d-f441553e3f9d",
         "name": "03 Login con clave incorrecta -> 401",
         "request": {
           "url": {
@@ -122,18 +122,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "8585409e-76fd-4c87-9be1-2d823709fee6",
+              "id": "59917d71-1ad0-4795-8265-f7cc7832918a",
               "type": "text/javascript",
               "exec": [
                 "pm.test('401', () => pm.response.to.have.status(401));"
               ],
-              "_lastExecutionId": "13037711-fefe-487d-8dd2-87a080f0822d"
+              "_lastExecutionId": "3623662c-a7bc-4f21-9af0-4da38a6b8d47"
             }
           }
         ]
       },
       {
-        "id": "ba447e2e-90fa-48b4-a1ff-c66ecbe752c7",
+        "id": "c917eb26-c3c6-4d58-890c-9ca633e295ab",
         "name": "04 Listar estudios (QIDO-RS) con token -> 200",
         "request": {
           "url": {
@@ -155,18 +155,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "9b808441-8ded-4118-bc30-2932ed4b239b",
+              "id": "f474b1bc-9c34-427a-94cc-e28114893389",
               "type": "text/javascript",
               "exec": [
                 "pm.test('200', () => pm.response.to.have.status(200));"
               ],
-              "_lastExecutionId": "cbe0ca82-809e-44ab-9be1-836357244630"
+              "_lastExecutionId": "f3860567-5bfc-469a-955c-054b690d01fe"
             }
           }
         ]
       },
       {
-        "id": "a6807b71-a58e-441b-b2c1-a8fcbfd3ff03",
+        "id": "21ebce9e-d3cc-4e95-b960-7151df40cd7e",
         "name": "05 Estudios SIN token -> 401",
         "request": {
           "url": {
@@ -192,18 +192,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "f8d8f9b6-a742-431b-b1b7-ea5e180cce52",
+              "id": "d9226f63-2843-4dd2-b18b-fc7279f61e9a",
               "type": "text/javascript",
               "exec": [
                 "pm.test('401', () => pm.response.to.have.status(401));"
               ],
-              "_lastExecutionId": "884446d1-411c-423f-9df1-443bb6dc0c32"
+              "_lastExecutionId": "9732eb15-51e1-4a85-bbb3-333ad6d5607b"
             }
           }
         ]
       },
       {
-        "id": "49f8d93e-c3d9-4be0-aeef-35badd9ee27a",
+        "id": "d85f154f-89e5-443c-94e8-9d67a98ba928",
         "name": "06 Ruta no permitida -> 400",
         "request": {
           "url": {
@@ -225,18 +225,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "ab73b77c-5070-4694-b44c-57bfc7b1c518",
+              "id": "ae8e12cb-3781-479c-a737-53ff8de74aaf",
               "type": "text/javascript",
               "exec": [
                 "pm.test('400', () => pm.response.to.have.status(400));"
               ],
-              "_lastExecutionId": "b2d458ba-0dc4-4739-9416-eea87830394a"
+              "_lastExecutionId": "6a2dd331-4f59-4756-81d3-f83847cf926c"
             }
           }
         ]
       },
       {
-        "id": "910e2695-88d9-4872-af61-d352492b74db",
+        "id": "b4ef66e0-81d4-4baf-aac8-caf435ab5d94",
         "name": "07 Logout -> 204",
         "request": {
           "url": {
@@ -258,18 +258,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "0965bcdf-86ee-4bae-96a2-d7750297498e",
+              "id": "084874b8-28ee-471e-97c8-c0820bcfeddc",
               "type": "text/javascript",
               "exec": [
                 "pm.test('204', () => pm.response.to.have.status(204));"
               ],
-              "_lastExecutionId": "08120e10-f583-46fc-a563-1c1213145167"
+              "_lastExecutionId": "b2abe718-fbbd-48cf-b10a-968a5f351740"
             }
           }
         ]
       },
       {
-        "id": "c0ec7c6b-eab6-4434-a01b-9ac2643ca9c6",
+        "id": "12cf2955-eb27-47f6-a826-28ad2c32ceeb",
         "name": "08 Login paciente -> 200, rol PACIENTE y guarda token",
         "request": {
           "url": {
@@ -301,18 +301,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "5be3e199-d689-4451-b263-e1cf1b166c45",
+              "id": "b86e0119-dd07-4600-adc3-dc38a7808e5d",
               "type": "text/javascript",
               "exec": [
                 "pm.test(\"200 y rol PACIENTE\",()=>{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
               ],
-              "_lastExecutionId": "a5a6c2f4-2edc-43ad-8491-28771093a3fb"
+              "_lastExecutionId": "5e723431-9adb-4046-ae25-99709ca02b12"
             }
           }
         ]
       },
       {
-        "id": "091bda62-2941-4fc8-af46-3b992f43ca99",
+        "id": "7dd84d53-2d5f-47bc-87c1-bfdbec96de87",
         "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
         "request": {
           "url": {
@@ -340,18 +340,18 @@
           {
             "listen": "test",
             "script": {
-              "id": "1f7b84be-1910-4602-9672-c0629d7af56a",
+              "id": "912bcb10-d057-441e-9f2e-8e7b17924f12",
               "type": "text/javascript",
               "exec": [
                 "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
               ],
-              "_lastExecutionId": "254baa70-b62a-45c5-a15f-2dc35c70f752"
+              "_lastExecutionId": "780db964-d3d5-4f2e-82ab-0b205cb8a9d3"
             }
           }
         ]
       },
       {
-        "id": "dcac1822-311a-4774-b59e-bf131ad2325d",
+        "id": "24f91c0b-f52a-40aa-8de6-8bde3be14063",
         "name": "10 Paciente: /series suelto -> 403",
         "request": {
           "url": {
@@ -379,12 +379,12 @@
           {
             "listen": "test",
             "script": {
-              "id": "f54070cc-e4dd-4931-ad99-f56c30b9116f",
+              "id": "a6d83a6b-9736-4515-a253-a7aff182e259",
               "type": "text/javascript",
               "exec": [
                 "pm.test(\"403\",()=>pm.response.to.have.status(403));"
               ],
-              "_lastExecutionId": "b96f7848-8871-451e-96b8-a6a4062ad95b"
+              "_lastExecutionId": "437e6b5e-0513-447d-b72b-5e8deb379986"
             }
           }
         ]
@@ -439,28 +439,28 @@
       }
     ],
     "info": {
-      "_postman_id": "c16d61b3-885c-43cd-912a-80f6c7f10c52",
+      "_postman_id": "1bbe8535-a7ee-4211-8ce4-a2fe160f391d",
       "name": "Visor PACS - Sprint 1",
       "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     }
   },
   "environment": {
-    "id": "3f9d87cf-bd25-4a6f-8baa-9b698d8b423f",
+    "id": "bde5aeef-b4df-430f-8eb9-9de8c1ca2a9a",
     "values": [
       {
         "type": "any",
-        "value": "***",
+        "value": "DrDemo_Pacs2026#",
         "key": "password"
       },
       {
         "type": "any",
-        "value": "***",
+        "value": "una-clave-de-12-o-mas",
         "key": "pacientePassword"
       }
     ]
   },
   "globals": {
-    "id": "e37e6824-4737-43d3-86db-ce0f10932f30",
+    "id": "fa604e25-7a26-41bc-a946-bdeb3e987ca4",
     "values": []
   },
   "run": {
@@ -512,10 +512,10 @@
       }
     },
     "timings": {
-      "responseAverage": 178.6,
-      "responseMin": 26,
-      "responseMax": 604,
-      "responseSd": 205.39289179521282,
+      "responseAverage": 152.5,
+      "responseMin": 40,
+      "responseMax": 336,
+      "responseSd": 114.6492477079549,
       "dnsAverage": 0,
       "dnsMin": 0,
       "dnsMax": 0,
@@ -524,8 +524,8 @@
       "firstByteMin": 0,
       "firstByteMax": 0,
       "firstByteSd": 0,
-      "started": 1792207976625,
-      "completed": 1792207979340
+      "started": 1792215654868,
+      "completed": 1792215657240
     },
     "executions": [
       {
@@ -538,12 +538,12 @@
           "eof": false,
           "bof": true,
           "cr": false,
-          "ref": "011f308c-34de-45a1-9e80-50c439beace3",
-          "httpRequestId": "54ea9650-946e-4753-9e88-0c41d1c24c30"
+          "ref": "86b5566b-7eb2-4e94-a265-81055f938659",
+          "httpRequestId": "3f7c5f9c-7a10-4226-bb38-ed4afcd416b4"
         },
         "item": {
-          "id": "6098ee0d-883e-4e81-8cd4-a8d05e4d6f7a",
-          "name": "01 Health (pÃºblico) -> 200",
+          "id": "ee7edd34-c32e-46fb-9a2a-8eb59c1b0096",
+          "name": "01 Health (público) -> 200",
           "request": {
             "url": {
               "path": [
@@ -567,12 +567,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "eb004791-0d97-4663-a677-57962d89e9a9",
+                "id": "e8c8ae0c-c99e-4e66-b3a2-0ddbd3bc162c",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('200', () => pm.response.to.have.status(200));"
                 ],
-                "_lastExecutionId": "16d4dc79-c7c4-4cf8-9eec-8394bab4366c"
+                "_lastExecutionId": "c4b8facf-daa5-44c8-ace1-e8eae7a254ff"
               }
             }
           ]
@@ -609,7 +609,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "65ab265a-2e6e-46e9-b87d-bf6360092fcc",
+              "value": "12b61b55-42cf-44b9-99c9-5aeb33af6be5",
               "system": true
             },
             {
@@ -635,7 +635,7 @@
           }
         },
         "response": {
-          "id": "b2caacbf-dd18-4d97-aff0-004e7cd0e720",
+          "id": "35e9532c-efa9-4723-a473-62b9d7e666ec",
           "status": "OK",
           "code": 200,
           "header": [
@@ -685,7 +685,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:57 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:55 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -717,10 +717,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 540,
+          "responseTime": 302,
           "responseSize": 15
         },
-        "id": "6098ee0d-883e-4e81-8cd4-a8d05e4d6f7a",
+        "id": "ee7edd34-c32e-46fb-9a2a-8eb59c1b0096",
         "assertions": [
           {
             "assertion": "200",
@@ -730,15 +730,15 @@
       },
       {
         "cursor": {
-          "ref": "b727f72b-1528-424c-b964-f77d2a059354",
+          "ref": "dce7a895-7dc7-4fb6-9b30-2f738cb58605",
           "length": 10,
           "cycles": 1,
           "position": 1,
           "iteration": 0,
-          "httpRequestId": "4d9bae20-ae96-462d-84f4-80a3f096f2c1"
+          "httpRequestId": "8b35a585-e26f-42a7-a21f-485ed1ab257e"
         },
         "item": {
-          "id": "8e4c89fb-d3ff-4789-baaa-b365b0586df6",
+          "id": "db926c4e-aa46-49e1-aefd-b216c593c23d",
           "name": "02 Login correcto -> 200 y guarda el token",
           "request": {
             "url": {
@@ -774,13 +774,13 @@
             {
               "listen": "test",
               "script": {
-                "id": "bcf5c05f-987e-4fd6-b1d4-a84c63f1b8c5",
+                "id": "7ee3b835-252e-4607-b8d7-1ebcda6208e5",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('200', () => pm.response.to.have.status(200));",
                   "pm.collectionVariables.set('token', pm.response.json().accessToken);"
                 ],
-                "_lastExecutionId": "41063b1d-02a3-490b-8c21-b391e3fe3e1c"
+                "_lastExecutionId": "c38f6f38-2127-4670-951e-102517dc4dca"
               }
             }
           ]
@@ -822,7 +822,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "e802d66f-0cd2-45e7-8ae9-77d608a13198",
+              "value": "6ecb618a-b2b3-4a09-9036-df753641e5e8",
               "system": true
             },
             {
@@ -857,7 +857,7 @@
           }
         },
         "response": {
-          "id": "5d046dc7-7101-49ea-8133-83c66e5eb364",
+          "id": "a3dee200-e731-4fb5-a728-3f36a2d3432d",
           "status": "OK",
           "code": 200,
           "header": [
@@ -907,7 +907,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:57 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:55 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -1052,12 +1052,12 @@
               121,
               77,
               106,
-              65,
-              52,
-              79,
-              68,
-              99,
-              51,
+              69,
+              50,
+              78,
+              84,
+              85,
+              49,
               76,
               67,
               74,
@@ -1075,12 +1075,12 @@
               73,
               121,
               77,
-              68,
-              99,
-              53,
+              84,
+              85,
+              50,
               78,
-              122,
-              99,
+              84,
+              85,
               115,
               73,
               109,
@@ -1130,101 +1130,101 @@
               106,
               111,
               105,
-              89,
-              109,
-              73,
-              48,
               79,
-              71,
-              81,
-              121,
-              90,
-              71,
-              69,
-              116,
-              78,
               68,
               103,
-              53,
-              89,
+              49,
+              77,
+              122,
+              99,
+              120,
+              90,
+              109,
+              85,
+              116,
+              78,
+              122,
+              107,
+              120,
+              78,
               83,
               48,
               48,
-              90,
-              68,
-              99,
-              52,
+              78,
+              50,
+              70,
+              106,
               76,
-              87,
-              73,
+              84,
+              103,
               51,
-              90,
+              89,
               106,
               81,
               116,
-              90,
-              87,
-              85,
-              52,
-              90,
-              84,
-              90,
-              106,
-              90,
-              109,
-              89,
-              52,
-              78,
+              77,
               71,
+              73,
+              121,
+              89,
+              84,
+              107,
+              51,
+              79,
+              87,
               82,
-              106,
+              107,
+              89,
+              109,
+              85,
+              121,
               73,
               110,
               48,
               46,
-              79,
-              66,
-              49,
-              95,
-              111,
-              80,
-              89,
-              52,
-              56,
-              55,
-              107,
               57,
-              98,
-              95,
-              117,
-              113,
-              70,
-              78,
-              78,
-              66,
-              108,
-              53,
-              50,
               105,
-              45,
-              117,
-              99,
-              75,
-              81,
-              77,
-              68,
-              102,
+              51,
+              119,
               65,
-              107,
-              80,
-              55,
-              45,
-              121,
-              101,
-              120,
-              115,
               74,
+              122,
+              52,
+              116,
+              78,
+              110,
+              111,
+              71,
+              80,
+              115,
+              86,
+              68,
+              48,
+              65,
+              111,
+              51,
+              106,
+              79,
+              107,
+              82,
+              57,
+              81,
+              105,
+              74,
+              84,
+              73,
+              105,
+              79,
+              75,
+              71,
+              109,
+              113,
+              109,
+              54,
               99,
+              98,
+              97,
+              52,
               34,
               44,
               34,
@@ -1311,10 +1311,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 604,
+          "responseTime": 198,
           "responseSize": 387
         },
-        "id": "8e4c89fb-d3ff-4789-baaa-b365b0586df6",
+        "id": "db926c4e-aa46-49e1-aefd-b216c593c23d",
         "assertions": [
           {
             "assertion": "200",
@@ -1324,15 +1324,15 @@
       },
       {
         "cursor": {
-          "ref": "ade1990c-2b70-4711-9b2f-b0cbce24c922",
+          "ref": "0da2fc67-5a2d-409f-96b9-4c5ad571fad5",
           "length": 10,
           "cycles": 1,
           "position": 2,
           "iteration": 0,
-          "httpRequestId": "c1385270-2af2-4a6f-9e1b-2cfa6b44b5b9"
+          "httpRequestId": "211067c2-b142-4dba-8dab-ed5f9bb2446f"
         },
         "item": {
-          "id": "54f8de3e-eaa4-45bd-a70b-b58b316eb434",
+          "id": "d2a711fb-da86-4fbf-a82d-f441553e3f9d",
           "name": "03 Login con clave incorrecta -> 401",
           "request": {
             "url": {
@@ -1368,12 +1368,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "8585409e-76fd-4c87-9be1-2d823709fee6",
+                "id": "59917d71-1ad0-4795-8265-f7cc7832918a",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('401', () => pm.response.to.have.status(401));"
                 ],
-                "_lastExecutionId": "13037711-fefe-487d-8dd2-87a080f0822d"
+                "_lastExecutionId": "3623662c-a7bc-4f21-9af0-4da38a6b8d47"
               }
             }
           ]
@@ -1415,7 +1415,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "526e8cdf-c225-4bb4-ad80-b74ab8e1a6d6",
+              "value": "e8603dcf-3d4b-4758-a5cb-e053415028c5",
               "system": true
             },
             {
@@ -1450,7 +1450,7 @@
           }
         },
         "response": {
-          "id": "b423e682-e2dc-4173-ba3e-2479a9227647",
+          "id": "da4ccdf6-4877-4275-894f-575322a032c4",
           "status": "Unauthorized",
           "code": 401,
           "header": [
@@ -1500,7 +1500,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:58 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:55 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -1661,10 +1661,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 144,
+          "responseTime": 192,
           "responseSize": 144
         },
-        "id": "54f8de3e-eaa4-45bd-a70b-b58b316eb434",
+        "id": "d2a711fb-da86-4fbf-a82d-f441553e3f9d",
         "assertions": [
           {
             "assertion": "401",
@@ -1674,15 +1674,15 @@
       },
       {
         "cursor": {
-          "ref": "d3c62fca-0f15-47c5-a16d-de2ddd1f3a8a",
+          "ref": "951e66bb-e08e-4324-86ec-5f54b08fef8c",
           "length": 10,
           "cycles": 1,
           "position": 3,
           "iteration": 0,
-          "httpRequestId": "1a84b191-4d98-4115-8f47-ad75ff4ad69e"
+          "httpRequestId": "0760c62c-62cc-4ec1-8dcd-62de1b1cfe5c"
         },
         "item": {
-          "id": "ba447e2e-90fa-48b4-a1ff-c66ecbe752c7",
+          "id": "c917eb26-c3c6-4d58-890c-9ca633e295ab",
           "name": "04 Listar estudios (QIDO-RS) con token -> 200",
           "request": {
             "url": {
@@ -1704,12 +1704,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "9b808441-8ded-4118-bc30-2932ed4b239b",
+                "id": "f474b1bc-9c34-427a-94cc-e28114893389",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('200', () => pm.response.to.have.status(200));"
                 ],
-                "_lastExecutionId": "cbe0ca82-809e-44ab-9be1-836357244630"
+                "_lastExecutionId": "f3860567-5bfc-469a-955c-054b690d01fe"
               }
             }
           ]
@@ -1732,7 +1732,7 @@
           "header": [
             {
               "key": "Authorization",
-              "value": "Bearer <JWT-OCULTO>",
+              "value": "Bearer ***JWT***",
               "system": true
             },
             {
@@ -1752,7 +1752,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "3e40e2ad-c981-4e0c-a069-faf74baab53d",
+              "value": "ba0ad465-5ee4-4c2e-829e-9179e323fb5f",
               "system": true
             },
             {
@@ -1777,14 +1777,14 @@
             "bearer": [
               {
                 "type": "string",
-                "value": "<JWT-OCULTO>",
+                "value": "***JWT***",
                 "key": "token"
               }
             ]
           }
         },
         "response": {
-          "id": "b8cb897e-4fe7-43c3-be59-b5fd9ef6de28",
+          "id": "8e0e7758-d86f-4ba9-9b18-8b77cd99a926",
           "status": "OK",
           "code": 200,
           "header": [
@@ -1826,7 +1826,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:58 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:56 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -5358,10 +5358,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 187,
+          "responseTime": 271,
           "responseSize": 3515
         },
-        "id": "ba447e2e-90fa-48b4-a1ff-c66ecbe752c7",
+        "id": "c917eb26-c3c6-4d58-890c-9ca633e295ab",
         "assertions": [
           {
             "assertion": "200",
@@ -5371,15 +5371,15 @@
       },
       {
         "cursor": {
-          "ref": "6f1e86a8-7d80-43b7-98a4-53259b891f34",
+          "ref": "b22c86f2-adb4-4817-bdaa-806e0517f4b1",
           "length": 10,
           "cycles": 1,
           "position": 4,
           "iteration": 0,
-          "httpRequestId": "18f4e55d-640f-4df6-bfd1-e01c38e3cb47"
+          "httpRequestId": "14c93664-0432-4a8b-a88c-edb00ee3be72"
         },
         "item": {
-          "id": "a6807b71-a58e-441b-b2c1-a8fcbfd3ff03",
+          "id": "21ebce9e-d3cc-4e95-b960-7151df40cd7e",
           "name": "05 Estudios SIN token -> 401",
           "request": {
             "url": {
@@ -5405,12 +5405,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "f8d8f9b6-a742-431b-b1b7-ea5e180cce52",
+                "id": "d9226f63-2843-4dd2-b18b-fc7279f61e9a",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('401', () => pm.response.to.have.status(401));"
                 ],
-                "_lastExecutionId": "884446d1-411c-423f-9df1-443bb6dc0c32"
+                "_lastExecutionId": "9732eb15-51e1-4a85-bbb3-333ad6d5607b"
               }
             }
           ]
@@ -5448,7 +5448,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "0e98b589-c1de-47c2-9713-bbfe90205e9a",
+              "value": "fab0945c-5ad0-48f2-a64a-6f2f5e377b6d",
               "system": true
             },
             {
@@ -5474,7 +5474,7 @@
           }
         },
         "response": {
-          "id": "4a4324f6-45cd-4afe-95b4-5f5012fffb5f",
+          "id": "1b4ea6d7-8685-49c9-b48d-d032acf3cb2e",
           "status": "Unauthorized",
           "code": 401,
           "header": [
@@ -5524,7 +5524,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:58 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:56 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -5540,10 +5540,10 @@
             "data": []
           },
           "cookie": [],
-          "responseTime": 26,
+          "responseTime": 40,
           "responseSize": 0
         },
-        "id": "a6807b71-a58e-441b-b2c1-a8fcbfd3ff03",
+        "id": "21ebce9e-d3cc-4e95-b960-7151df40cd7e",
         "assertions": [
           {
             "assertion": "401",
@@ -5553,15 +5553,15 @@
       },
       {
         "cursor": {
-          "ref": "4e54a80f-c40d-4bc3-aaad-d3c1198b5c4e",
+          "ref": "a7b7d6be-feb9-4d6f-a931-f2bad5c5303f",
           "length": 10,
           "cycles": 1,
           "position": 5,
           "iteration": 0,
-          "httpRequestId": "fa0abda0-c3da-4dd3-811a-8026c6e35005"
+          "httpRequestId": "f6e77e16-d117-443a-b726-449758ec68cf"
         },
         "item": {
-          "id": "49f8d93e-c3d9-4be0-aeef-35badd9ee27a",
+          "id": "d85f154f-89e5-443c-94e8-9d67a98ba928",
           "name": "06 Ruta no permitida -> 400",
           "request": {
             "url": {
@@ -5583,12 +5583,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "ab73b77c-5070-4694-b44c-57bfc7b1c518",
+                "id": "ae8e12cb-3781-479c-a737-53ff8de74aaf",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('400', () => pm.response.to.have.status(400));"
                 ],
-                "_lastExecutionId": "b2d458ba-0dc4-4739-9416-eea87830394a"
+                "_lastExecutionId": "6a2dd331-4f59-4756-81d3-f83847cf926c"
               }
             }
           ]
@@ -5611,7 +5611,7 @@
           "header": [
             {
               "key": "Authorization",
-              "value": "Bearer <JWT-OCULTO>",
+              "value": "Bearer ***JWT***",
               "system": true
             },
             {
@@ -5631,7 +5631,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "835e5428-3bbc-4227-862c-af20f42201e1",
+              "value": "b5014ea4-0aec-45f6-8e09-5746f378acf8",
               "system": true
             },
             {
@@ -5656,14 +5656,14 @@
             "bearer": [
               {
                 "type": "string",
-                "value": "<JWT-OCULTO>",
+                "value": "***JWT***",
                 "key": "token"
               }
             ]
           }
         },
         "response": {
-          "id": "e90a84db-7693-4774-8328-0430ca9b99da",
+          "id": "e88c87a2-e086-4a6b-998b-6cbf886a9c58",
           "status": "Bad Request",
           "code": 400,
           "header": [
@@ -5713,7 +5713,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:58 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:56 GMT"
             },
             {
               "key": "Connection",
@@ -5876,10 +5876,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 35,
+          "responseTime": 57,
           "responseSize": 150
         },
-        "id": "49f8d93e-c3d9-4be0-aeef-35badd9ee27a",
+        "id": "d85f154f-89e5-443c-94e8-9d67a98ba928",
         "assertions": [
           {
             "assertion": "400",
@@ -5889,15 +5889,15 @@
       },
       {
         "cursor": {
-          "ref": "54dd2850-eb6f-4b47-92ab-2a2cf4b79e3a",
+          "ref": "ca8beeef-69d7-4c92-91d2-931e6e8209ed",
           "length": 10,
           "cycles": 1,
           "position": 6,
           "iteration": 0,
-          "httpRequestId": "3145e54b-1aa6-4e70-91d4-c0f0af7a2aa5"
+          "httpRequestId": "35783a4b-5c12-4086-8e4d-0c71a0e3065d"
         },
         "item": {
-          "id": "910e2695-88d9-4872-af61-d352492b74db",
+          "id": "b4ef66e0-81d4-4baf-aac8-caf435ab5d94",
           "name": "07 Logout -> 204",
           "request": {
             "url": {
@@ -5919,12 +5919,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "0965bcdf-86ee-4bae-96a2-d7750297498e",
+                "id": "084874b8-28ee-471e-97c8-c0820bcfeddc",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('204', () => pm.response.to.have.status(204));"
                 ],
-                "_lastExecutionId": "08120e10-f583-46fc-a563-1c1213145167"
+                "_lastExecutionId": "b2abe718-fbbd-48cf-b10a-968a5f351740"
               }
             }
           ]
@@ -5947,7 +5947,7 @@
           "header": [
             {
               "key": "Authorization",
-              "value": "Bearer <JWT-OCULTO>",
+              "value": "Bearer ***JWT***",
               "system": true
             },
             {
@@ -5967,7 +5967,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "3c84d69f-fe28-4f87-a1d4-6ade94cfa8a6",
+              "value": "e211f584-d286-4640-a7b9-fb1f738a73a0",
               "system": true
             },
             {
@@ -5997,14 +5997,14 @@
             "bearer": [
               {
                 "type": "string",
-                "value": "<JWT-OCULTO>",
+                "value": "***JWT***",
                 "key": "token"
               }
             ]
           }
         },
         "response": {
-          "id": "2e7eca62-bd75-4387-8e1b-f3c879f043f7",
+          "id": "8945b653-98ce-497e-8094-0bb49577be1b",
           "status": "No Content",
           "code": 204,
           "header": [
@@ -6046,7 +6046,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:58 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:56 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -6062,10 +6062,10 @@
             "data": []
           },
           "cookie": [],
-          "responseTime": 36,
+          "responseTime": 44,
           "responseSize": 0
         },
-        "id": "910e2695-88d9-4872-af61-d352492b74db",
+        "id": "b4ef66e0-81d4-4baf-aac8-caf435ab5d94",
         "assertions": [
           {
             "assertion": "204",
@@ -6075,15 +6075,15 @@
       },
       {
         "cursor": {
-          "ref": "7fb9fdbc-ee0c-4a84-91dd-161b96b56918",
+          "ref": "2ee333b7-9b22-422f-83e0-9dc156bc01f4",
           "length": 10,
           "cycles": 1,
           "position": 7,
           "iteration": 0,
-          "httpRequestId": "2af38a29-4eaa-468a-b8c9-2b72a0296470"
+          "httpRequestId": "92e769b6-576b-4e7e-88c6-b07f2a9d7f2b"
         },
         "item": {
-          "id": "c0ec7c6b-eab6-4434-a01b-9ac2643ca9c6",
+          "id": "12cf2955-eb27-47f6-a826-28ad2c32ceeb",
           "name": "08 Login paciente -> 200, rol PACIENTE y guarda token",
           "request": {
             "url": {
@@ -6115,12 +6115,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "5be3e199-d689-4451-b263-e1cf1b166c45",
+                "id": "b86e0119-dd07-4600-adc3-dc38a7808e5d",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"200 y rol PACIENTE\",()=>{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
                 ],
-                "_lastExecutionId": "a5a6c2f4-2edc-43ad-8491-28771093a3fb"
+                "_lastExecutionId": "5e723431-9adb-4046-ae25-99709ca02b12"
               }
             }
           ]
@@ -6147,7 +6147,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer <JWT-OCULTO>",
+              "value": "Bearer ***JWT***",
               "system": true
             },
             {
@@ -6167,7 +6167,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "08c0a643-e981-47cb-9527-175a1e9bfe7f",
+              "value": "ee5497f1-4d74-43ee-87b0-e199bbc01be4",
               "system": true
             },
             {
@@ -6201,14 +6201,14 @@
             "bearer": [
               {
                 "type": "string",
-                "value": "<JWT-OCULTO>",
+                "value": "***JWT***",
                 "key": "token"
               }
             ]
           }
         },
         "response": {
-          "id": "19b8cbb8-12e8-428c-b651-d0fcc41bff65",
+          "id": "654ab511-02e5-4fb6-90e9-f640e54a5084",
           "status": "OK",
           "code": 200,
           "header": [
@@ -6258,7 +6258,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:59 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:56 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -6443,12 +6443,12 @@
               121,
               77,
               106,
-              65,
-              52,
-              79,
-              68,
-              99,
-              53,
+              69,
+              50,
+              78,
+              84,
+              85,
+              50,
               76,
               67,
               74,
@@ -6466,12 +6466,12 @@
               73,
               121,
               77,
-              68,
-              99,
-              53,
+              84,
+              85,
+              50,
               78,
-              122,
-              107,
+              84,
+              89,
               115,
               73,
               109,
@@ -6523,100 +6523,100 @@
               54,
               73,
               106,
-              73,
-              51,
+              99,
+              50,
+              77,
+              68,
+              65,
+              120,
               77,
               106,
-              77,
-              119,
-              89,
-              84,
-              89,
-              48,
+              85,
+              53,
               76,
               84,
-              86,
-              108,
-              78,
-              122,
               99,
+              122,
+              77,
+              68,
+              85,
               116,
               78,
-              68,
-              78,
-              104,
+              71,
+              77,
+              51,
               77,
               67,
-              49,
-              104,
-              78,
-              109,
-              85,
-              51,
+              48,
+              52,
+              77,
+              87,
+              74,
+              108,
               76,
-              84,
-              81,
+              87,
+              73,
               119,
               89,
-              122,
-              86,
-              107,
-              78,
+              109,
+              69,
+              50,
+              77,
               87,
-              89,
+              77,
               52,
               89,
-              84,
-              107,
-              49,
-              89,
-              83,
+              106,
+              100,
+              104,
+              78,
+              121,
               74,
               57,
               46,
-              78,
-              112,
-              82,
-              50,
-              56,
-              50,
-              104,
-              115,
-              89,
-              120,
-              100,
-              73,
+              122,
+              99,
+              67,
+              85,
               79,
-              72,
-              106,
-              69,
-              100,
-              114,
-              73,
-              121,
-              97,
-              45,
-              115,
-              113,
-              98,
-              84,
-              84,
-              102,
-              114,
-              103,
-              109,
-              57,
-              80,
+              120,
+              105,
+              119,
+              54,
               81,
-              51,
-              65,
-              80,
-              65,
+              78,
+              104,
+              111,
+              97,
+              117,
+              99,
+              82,
               95,
-              73,
-              87,
+              113,
+              121,
+              45,
+              74,
+              56,
+              74,
+              81,
+              83,
               105,
               103,
+              48,
+              105,
+              52,
+              70,
+              110,
+              95,
+              82,
+              75,
+              107,
+              118,
+              68,
+              57,
+              113,
+              82,
+              85,
               34,
               44,
               34,
@@ -6706,10 +6706,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 154,
+          "responseTime": 336,
           "responseSize": 431
         },
-        "id": "c0ec7c6b-eab6-4434-a01b-9ac2643ca9c6",
+        "id": "12cf2955-eb27-47f6-a826-28ad2c32ceeb",
         "assertions": [
           {
             "assertion": "200 y rol PACIENTE",
@@ -6719,15 +6719,15 @@
       },
       {
         "cursor": {
-          "ref": "23a2e62f-8ede-46d2-8fb5-45dcf69c6522",
+          "ref": "ae94b837-c93e-4845-912f-2498be1216b2",
           "length": 10,
           "cycles": 1,
           "position": 8,
           "iteration": 0,
-          "httpRequestId": "e1239672-7ba6-48cd-9d0d-764673f7cc52"
+          "httpRequestId": "1d61cd42-bccc-448e-87db-621466035d2e"
         },
         "item": {
-          "id": "091bda62-2941-4fc8-af46-3b992f43ca99",
+          "id": "7dd84d53-2d5f-47bc-87c1-bfdbec96de87",
           "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
           "request": {
             "url": {
@@ -6755,12 +6755,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "1f7b84be-1910-4602-9672-c0629d7af56a",
+                "id": "912bcb10-d057-441e-9f2e-8e7b17924f12",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
                 ],
-                "_lastExecutionId": "254baa70-b62a-45c5-a15f-2dc35c70f752"
+                "_lastExecutionId": "780db964-d3d5-4f2e-82ab-0b205cb8a9d3"
               }
             }
           ]
@@ -6783,7 +6783,7 @@
           "header": [
             {
               "key": "Authorization",
-              "value": "Bearer <JWT-OCULTO>",
+              "value": "Bearer ***JWT***",
               "system": true
             },
             {
@@ -6803,7 +6803,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "d375fd22-9686-4dfd-896f-14875387fe0f",
+              "value": "6ee2ad7f-3094-42be-b55f-e72b016a7dcb",
               "system": true
             },
             {
@@ -6828,14 +6828,14 @@
             "bearer": [
               {
                 "type": "string",
-                "value": "<JWT-OCULTO>",
+                "value": "***JWT***",
                 "key": "token"
               }
             ]
           }
         },
         "response": {
-          "id": "001ed18f-bded-4d38-9ec3-ee565f6a16c5",
+          "id": "d3f15a7f-4924-4b96-8cfb-76002cb42cc3",
           "status": "OK",
           "code": 200,
           "header": [
@@ -6877,7 +6877,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:59 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:57 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -10409,10 +10409,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 28,
+          "responseTime": 42,
           "responseSize": 3515
         },
-        "id": "091bda62-2941-4fc8-af46-3b992f43ca99",
+        "id": "7dd84d53-2d5f-47bc-87c1-bfdbec96de87",
         "assertions": [
           {
             "assertion": "200",
@@ -10433,15 +10433,15 @@
       },
       {
         "cursor": {
-          "ref": "457f014c-806e-4289-921d-c3a78881d45e",
+          "ref": "0fccc0c3-9d5c-4a98-88cc-ccf533390935",
           "length": 10,
           "cycles": 1,
           "position": 9,
           "iteration": 0,
-          "httpRequestId": "714db3eb-baeb-4a9b-8fbb-0b4170eb39c0"
+          "httpRequestId": "50c5ee23-f793-4592-aa95-8013b357357b"
         },
         "item": {
-          "id": "dcac1822-311a-4774-b59e-bf131ad2325d",
+          "id": "24f91c0b-f52a-40aa-8de6-8bde3be14063",
           "name": "10 Paciente: /series suelto -> 403",
           "request": {
             "url": {
@@ -10469,12 +10469,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "f54070cc-e4dd-4931-ad99-f56c30b9116f",
+                "id": "a6d83a6b-9736-4515-a253-a7aff182e259",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"403\",()=>pm.response.to.have.status(403));"
                 ],
-                "_lastExecutionId": "b96f7848-8871-451e-96b8-a6a4062ad95b"
+                "_lastExecutionId": "437e6b5e-0513-447d-b72b-5e8deb379986"
               }
             }
           ]
@@ -10497,7 +10497,7 @@
           "header": [
             {
               "key": "Authorization",
-              "value": "Bearer <JWT-OCULTO>",
+              "value": "Bearer ***JWT***",
               "system": true
             },
             {
@@ -10517,7 +10517,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "72ddf515-282b-457e-9e10-abb5f2c697f5",
+              "value": "18541997-49b8-4ba9-843e-a7e051af0b78",
               "system": true
             },
             {
@@ -10542,14 +10542,14 @@
             "bearer": [
               {
                 "type": "string",
-                "value": "<JWT-OCULTO>",
+                "value": "***JWT***",
                 "key": "token"
               }
             ]
           }
         },
         "response": {
-          "id": "4a7f5d3b-cb4d-4407-8cdc-73a2f8271c94",
+          "id": "0d8106ed-2998-4a47-9089-0f88849da89e",
           "status": "OK",
           "code": 200,
           "header": [
@@ -10591,7 +10591,7 @@
             },
             {
               "key": "Date",
-              "value": "Sat, 17 Oct 2026 03:32:59 GMT"
+              "value": "Sat, 17 Oct 2026 05:40:57 GMT"
             },
             {
               "key": "Keep-Alive",
@@ -16386,10 +16386,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 32,
+          "responseTime": 43,
           "responseSize": 5778
         },
-        "id": "dcac1822-311a-4774-b59e-bf131ad2325d",
+        "id": "24f91c0b-f52a-40aa-8de6-8bde3be14063",
         "assertions": [
           {
             "assertion": "403",
@@ -16417,8 +16417,8 @@
           "message": "expected false to deeply equal true",
           "stack": "AssertionError: expected false to deeply equal true\n   at Object.eval sandbox-script.js:2:9)",
           "checksum": "3dc699eadc79cdb4fe08a8d771082f40",
-          "id": "cababf33-4239-4396-972d-2b2f5ec0445f",
-          "timestamp": 1792207979184,
+          "id": "f17fa424-6851-40b0-9504-4f13c249669a",
+          "timestamp": 1792215657084,
           "stacktrace": [
             {
               "fileName": "sandbox-script.js",
@@ -16433,7 +16433,7 @@
         },
         "at": "assertion:1 in test-script",
         "source": {
-          "id": "091bda62-2941-4fc8-af46-3b992f43ca99",
+          "id": "7dd84d53-2d5f-47bc-87c1-bfdbec96de87",
           "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
           "request": {
             "url": {
@@ -16461,12 +16461,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "1f7b84be-1910-4602-9672-c0629d7af56a",
+                "id": "912bcb10-d057-441e-9f2e-8e7b17924f12",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
                 ],
-                "_lastExecutionId": "254baa70-b62a-45c5-a15f-2dc35c70f752"
+                "_lastExecutionId": "780db964-d3d5-4f2e-82ab-0b205cb8a9d3"
               }
             }
           ]
@@ -16474,8 +16474,8 @@
         "parent": {
           "item": [
             {
-              "id": "6098ee0d-883e-4e81-8cd4-a8d05e4d6f7a",
-              "name": "01 Health (pÃºblico) -> 200",
+              "id": "ee7edd34-c32e-46fb-9a2a-8eb59c1b0096",
+              "name": "01 Health (público) -> 200",
               "request": {
                 "url": {
                   "path": [
@@ -16499,18 +16499,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "eb004791-0d97-4663-a677-57962d89e9a9",
+                    "id": "e8c8ae0c-c99e-4e66-b3a2-0ddbd3bc162c",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('200', () => pm.response.to.have.status(200));"
                     ],
-                    "_lastExecutionId": "16d4dc79-c7c4-4cf8-9eec-8394bab4366c"
+                    "_lastExecutionId": "c4b8facf-daa5-44c8-ace1-e8eae7a254ff"
                   }
                 }
               ]
             },
             {
-              "id": "8e4c89fb-d3ff-4789-baaa-b365b0586df6",
+              "id": "db926c4e-aa46-49e1-aefd-b216c593c23d",
               "name": "02 Login correcto -> 200 y guarda el token",
               "request": {
                 "url": {
@@ -16546,19 +16546,19 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "bcf5c05f-987e-4fd6-b1d4-a84c63f1b8c5",
+                    "id": "7ee3b835-252e-4607-b8d7-1ebcda6208e5",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('200', () => pm.response.to.have.status(200));",
                       "pm.collectionVariables.set('token', pm.response.json().accessToken);"
                     ],
-                    "_lastExecutionId": "41063b1d-02a3-490b-8c21-b391e3fe3e1c"
+                    "_lastExecutionId": "c38f6f38-2127-4670-951e-102517dc4dca"
                   }
                 }
               ]
             },
             {
-              "id": "54f8de3e-eaa4-45bd-a70b-b58b316eb434",
+              "id": "d2a711fb-da86-4fbf-a82d-f441553e3f9d",
               "name": "03 Login con clave incorrecta -> 401",
               "request": {
                 "url": {
@@ -16594,18 +16594,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "8585409e-76fd-4c87-9be1-2d823709fee6",
+                    "id": "59917d71-1ad0-4795-8265-f7cc7832918a",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('401', () => pm.response.to.have.status(401));"
                     ],
-                    "_lastExecutionId": "13037711-fefe-487d-8dd2-87a080f0822d"
+                    "_lastExecutionId": "3623662c-a7bc-4f21-9af0-4da38a6b8d47"
                   }
                 }
               ]
             },
             {
-              "id": "ba447e2e-90fa-48b4-a1ff-c66ecbe752c7",
+              "id": "c917eb26-c3c6-4d58-890c-9ca633e295ab",
               "name": "04 Listar estudios (QIDO-RS) con token -> 200",
               "request": {
                 "url": {
@@ -16627,18 +16627,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "9b808441-8ded-4118-bc30-2932ed4b239b",
+                    "id": "f474b1bc-9c34-427a-94cc-e28114893389",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('200', () => pm.response.to.have.status(200));"
                     ],
-                    "_lastExecutionId": "cbe0ca82-809e-44ab-9be1-836357244630"
+                    "_lastExecutionId": "f3860567-5bfc-469a-955c-054b690d01fe"
                   }
                 }
               ]
             },
             {
-              "id": "a6807b71-a58e-441b-b2c1-a8fcbfd3ff03",
+              "id": "21ebce9e-d3cc-4e95-b960-7151df40cd7e",
               "name": "05 Estudios SIN token -> 401",
               "request": {
                 "url": {
@@ -16664,18 +16664,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "f8d8f9b6-a742-431b-b1b7-ea5e180cce52",
+                    "id": "d9226f63-2843-4dd2-b18b-fc7279f61e9a",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('401', () => pm.response.to.have.status(401));"
                     ],
-                    "_lastExecutionId": "884446d1-411c-423f-9df1-443bb6dc0c32"
+                    "_lastExecutionId": "9732eb15-51e1-4a85-bbb3-333ad6d5607b"
                   }
                 }
               ]
             },
             {
-              "id": "49f8d93e-c3d9-4be0-aeef-35badd9ee27a",
+              "id": "d85f154f-89e5-443c-94e8-9d67a98ba928",
               "name": "06 Ruta no permitida -> 400",
               "request": {
                 "url": {
@@ -16697,18 +16697,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "ab73b77c-5070-4694-b44c-57bfc7b1c518",
+                    "id": "ae8e12cb-3781-479c-a737-53ff8de74aaf",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('400', () => pm.response.to.have.status(400));"
                     ],
-                    "_lastExecutionId": "b2d458ba-0dc4-4739-9416-eea87830394a"
+                    "_lastExecutionId": "6a2dd331-4f59-4756-81d3-f83847cf926c"
                   }
                 }
               ]
             },
             {
-              "id": "910e2695-88d9-4872-af61-d352492b74db",
+              "id": "b4ef66e0-81d4-4baf-aac8-caf435ab5d94",
               "name": "07 Logout -> 204",
               "request": {
                 "url": {
@@ -16730,18 +16730,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "0965bcdf-86ee-4bae-96a2-d7750297498e",
+                    "id": "084874b8-28ee-471e-97c8-c0820bcfeddc",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('204', () => pm.response.to.have.status(204));"
                     ],
-                    "_lastExecutionId": "08120e10-f583-46fc-a563-1c1213145167"
+                    "_lastExecutionId": "b2abe718-fbbd-48cf-b10a-968a5f351740"
                   }
                 }
               ]
             },
             {
-              "id": "c0ec7c6b-eab6-4434-a01b-9ac2643ca9c6",
+              "id": "12cf2955-eb27-47f6-a826-28ad2c32ceeb",
               "name": "08 Login paciente -> 200, rol PACIENTE y guarda token",
               "request": {
                 "url": {
@@ -16773,18 +16773,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "5be3e199-d689-4451-b263-e1cf1b166c45",
+                    "id": "b86e0119-dd07-4600-adc3-dc38a7808e5d",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test(\"200 y rol PACIENTE\",()=>{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
                     ],
-                    "_lastExecutionId": "a5a6c2f4-2edc-43ad-8491-28771093a3fb"
+                    "_lastExecutionId": "5e723431-9adb-4046-ae25-99709ca02b12"
                   }
                 }
               ]
             },
             {
-              "id": "091bda62-2941-4fc8-af46-3b992f43ca99",
+              "id": "7dd84d53-2d5f-47bc-87c1-bfdbec96de87",
               "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
               "request": {
                 "url": {
@@ -16812,18 +16812,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "1f7b84be-1910-4602-9672-c0629d7af56a",
+                    "id": "912bcb10-d057-441e-9f2e-8e7b17924f12",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
                     ],
-                    "_lastExecutionId": "254baa70-b62a-45c5-a15f-2dc35c70f752"
+                    "_lastExecutionId": "780db964-d3d5-4f2e-82ab-0b205cb8a9d3"
                   }
                 }
               ]
             },
             {
-              "id": "dcac1822-311a-4774-b59e-bf131ad2325d",
+              "id": "24f91c0b-f52a-40aa-8de6-8bde3be14063",
               "name": "10 Paciente: /series suelto -> 403",
               "request": {
                 "url": {
@@ -16851,12 +16851,12 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "f54070cc-e4dd-4931-ad99-f56c30b9116f",
+                    "id": "a6d83a6b-9736-4515-a253-a7aff182e259",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test(\"403\",()=>pm.response.to.have.status(403));"
                     ],
-                    "_lastExecutionId": "b96f7848-8871-451e-96b8-a6a4062ad95b"
+                    "_lastExecutionId": "437e6b5e-0513-447d-b72b-5e8deb379986"
                   }
                 }
               ]
@@ -16911,20 +16911,20 @@
             }
           ],
           "info": {
-            "_postman_id": "c16d61b3-885c-43cd-912a-80f6c7f10c52",
+            "_postman_id": "1bbe8535-a7ee-4211-8ce4-a2fe160f391d",
             "name": "Visor PACS - Sprint 1",
             "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
           }
         },
         "cursor": {
-          "ref": "23a2e62f-8ede-46d2-8fb5-45dcf69c6522",
+          "ref": "ae94b837-c93e-4845-912f-2498be1216b2",
           "length": 10,
           "cycles": 1,
           "position": 8,
           "iteration": 0,
-          "httpRequestId": "e1239672-7ba6-48cd-9d0d-764673f7cc52",
-          "scriptId": "1f7b84be-1910-4602-9672-c0629d7af56a",
-          "execution": "254baa70-b62a-45c5-a15f-2dc35c70f752"
+          "httpRequestId": "1d61cd42-bccc-448e-87db-621466035d2e",
+          "scriptId": "912bcb10-d057-441e-9f2e-8e7b17924f12",
+          "execution": "780db964-d3d5-4f2e-82ab-0b205cb8a9d3"
         }
       },
       {
@@ -16935,8 +16935,8 @@
           "message": "expected response to have status code 403 but got 200",
           "stack": "AssertionError: expected response to have status code 403 but got 200\n   at Object.eval sandbox-script.js:1:10)",
           "checksum": "5e6e5862d286873b30848a9ac2bddebd",
-          "id": "bba6b36d-15b7-4567-a575-901277ed1a1c",
-          "timestamp": 1792207979318,
+          "id": "8280b6dd-8f79-446d-8059-72e429fd02d7",
+          "timestamp": 1792215657213,
           "stacktrace": [
             {
               "fileName": "sandbox-script.js",
@@ -16951,7 +16951,7 @@
         },
         "at": "assertion:0 in test-script",
         "source": {
-          "id": "dcac1822-311a-4774-b59e-bf131ad2325d",
+          "id": "24f91c0b-f52a-40aa-8de6-8bde3be14063",
           "name": "10 Paciente: /series suelto -> 403",
           "request": {
             "url": {
@@ -16979,12 +16979,12 @@
             {
               "listen": "test",
               "script": {
-                "id": "f54070cc-e4dd-4931-ad99-f56c30b9116f",
+                "id": "a6d83a6b-9736-4515-a253-a7aff182e259",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"403\",()=>pm.response.to.have.status(403));"
                 ],
-                "_lastExecutionId": "b96f7848-8871-451e-96b8-a6a4062ad95b"
+                "_lastExecutionId": "437e6b5e-0513-447d-b72b-5e8deb379986"
               }
             }
           ]
@@ -16992,8 +16992,8 @@
         "parent": {
           "item": [
             {
-              "id": "6098ee0d-883e-4e81-8cd4-a8d05e4d6f7a",
-              "name": "01 Health (pÃºblico) -> 200",
+              "id": "ee7edd34-c32e-46fb-9a2a-8eb59c1b0096",
+              "name": "01 Health (público) -> 200",
               "request": {
                 "url": {
                   "path": [
@@ -17017,18 +17017,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "eb004791-0d97-4663-a677-57962d89e9a9",
+                    "id": "e8c8ae0c-c99e-4e66-b3a2-0ddbd3bc162c",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('200', () => pm.response.to.have.status(200));"
                     ],
-                    "_lastExecutionId": "16d4dc79-c7c4-4cf8-9eec-8394bab4366c"
+                    "_lastExecutionId": "c4b8facf-daa5-44c8-ace1-e8eae7a254ff"
                   }
                 }
               ]
             },
             {
-              "id": "8e4c89fb-d3ff-4789-baaa-b365b0586df6",
+              "id": "db926c4e-aa46-49e1-aefd-b216c593c23d",
               "name": "02 Login correcto -> 200 y guarda el token",
               "request": {
                 "url": {
@@ -17064,19 +17064,19 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "bcf5c05f-987e-4fd6-b1d4-a84c63f1b8c5",
+                    "id": "7ee3b835-252e-4607-b8d7-1ebcda6208e5",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('200', () => pm.response.to.have.status(200));",
                       "pm.collectionVariables.set('token', pm.response.json().accessToken);"
                     ],
-                    "_lastExecutionId": "41063b1d-02a3-490b-8c21-b391e3fe3e1c"
+                    "_lastExecutionId": "c38f6f38-2127-4670-951e-102517dc4dca"
                   }
                 }
               ]
             },
             {
-              "id": "54f8de3e-eaa4-45bd-a70b-b58b316eb434",
+              "id": "d2a711fb-da86-4fbf-a82d-f441553e3f9d",
               "name": "03 Login con clave incorrecta -> 401",
               "request": {
                 "url": {
@@ -17112,18 +17112,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "8585409e-76fd-4c87-9be1-2d823709fee6",
+                    "id": "59917d71-1ad0-4795-8265-f7cc7832918a",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('401', () => pm.response.to.have.status(401));"
                     ],
-                    "_lastExecutionId": "13037711-fefe-487d-8dd2-87a080f0822d"
+                    "_lastExecutionId": "3623662c-a7bc-4f21-9af0-4da38a6b8d47"
                   }
                 }
               ]
             },
             {
-              "id": "ba447e2e-90fa-48b4-a1ff-c66ecbe752c7",
+              "id": "c917eb26-c3c6-4d58-890c-9ca633e295ab",
               "name": "04 Listar estudios (QIDO-RS) con token -> 200",
               "request": {
                 "url": {
@@ -17145,18 +17145,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "9b808441-8ded-4118-bc30-2932ed4b239b",
+                    "id": "f474b1bc-9c34-427a-94cc-e28114893389",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('200', () => pm.response.to.have.status(200));"
                     ],
-                    "_lastExecutionId": "cbe0ca82-809e-44ab-9be1-836357244630"
+                    "_lastExecutionId": "f3860567-5bfc-469a-955c-054b690d01fe"
                   }
                 }
               ]
             },
             {
-              "id": "a6807b71-a58e-441b-b2c1-a8fcbfd3ff03",
+              "id": "21ebce9e-d3cc-4e95-b960-7151df40cd7e",
               "name": "05 Estudios SIN token -> 401",
               "request": {
                 "url": {
@@ -17182,18 +17182,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "f8d8f9b6-a742-431b-b1b7-ea5e180cce52",
+                    "id": "d9226f63-2843-4dd2-b18b-fc7279f61e9a",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('401', () => pm.response.to.have.status(401));"
                     ],
-                    "_lastExecutionId": "884446d1-411c-423f-9df1-443bb6dc0c32"
+                    "_lastExecutionId": "9732eb15-51e1-4a85-bbb3-333ad6d5607b"
                   }
                 }
               ]
             },
             {
-              "id": "49f8d93e-c3d9-4be0-aeef-35badd9ee27a",
+              "id": "d85f154f-89e5-443c-94e8-9d67a98ba928",
               "name": "06 Ruta no permitida -> 400",
               "request": {
                 "url": {
@@ -17215,18 +17215,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "ab73b77c-5070-4694-b44c-57bfc7b1c518",
+                    "id": "ae8e12cb-3781-479c-a737-53ff8de74aaf",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('400', () => pm.response.to.have.status(400));"
                     ],
-                    "_lastExecutionId": "b2d458ba-0dc4-4739-9416-eea87830394a"
+                    "_lastExecutionId": "6a2dd331-4f59-4756-81d3-f83847cf926c"
                   }
                 }
               ]
             },
             {
-              "id": "910e2695-88d9-4872-af61-d352492b74db",
+              "id": "b4ef66e0-81d4-4baf-aac8-caf435ab5d94",
               "name": "07 Logout -> 204",
               "request": {
                 "url": {
@@ -17248,18 +17248,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "0965bcdf-86ee-4bae-96a2-d7750297498e",
+                    "id": "084874b8-28ee-471e-97c8-c0820bcfeddc",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test('204', () => pm.response.to.have.status(204));"
                     ],
-                    "_lastExecutionId": "08120e10-f583-46fc-a563-1c1213145167"
+                    "_lastExecutionId": "b2abe718-fbbd-48cf-b10a-968a5f351740"
                   }
                 }
               ]
             },
             {
-              "id": "c0ec7c6b-eab6-4434-a01b-9ac2643ca9c6",
+              "id": "12cf2955-eb27-47f6-a826-28ad2c32ceeb",
               "name": "08 Login paciente -> 200, rol PACIENTE y guarda token",
               "request": {
                 "url": {
@@ -17291,18 +17291,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "5be3e199-d689-4451-b263-e1cf1b166c45",
+                    "id": "b86e0119-dd07-4600-adc3-dc38a7808e5d",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test(\"200 y rol PACIENTE\",()=>{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
                     ],
-                    "_lastExecutionId": "a5a6c2f4-2edc-43ad-8491-28771093a3fb"
+                    "_lastExecutionId": "5e723431-9adb-4046-ae25-99709ca02b12"
                   }
                 }
               ]
             },
             {
-              "id": "091bda62-2941-4fc8-af46-3b992f43ca99",
+              "id": "7dd84d53-2d5f-47bc-87c1-bfdbec96de87",
               "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
               "request": {
                 "url": {
@@ -17330,18 +17330,18 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "1f7b84be-1910-4602-9672-c0629d7af56a",
+                    "id": "912bcb10-d057-441e-9f2e-8e7b17924f12",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
                     ],
-                    "_lastExecutionId": "254baa70-b62a-45c5-a15f-2dc35c70f752"
+                    "_lastExecutionId": "780db964-d3d5-4f2e-82ab-0b205cb8a9d3"
                   }
                 }
               ]
             },
             {
-              "id": "dcac1822-311a-4774-b59e-bf131ad2325d",
+              "id": "24f91c0b-f52a-40aa-8de6-8bde3be14063",
               "name": "10 Paciente: /series suelto -> 403",
               "request": {
                 "url": {
@@ -17369,12 +17369,12 @@
                 {
                   "listen": "test",
                   "script": {
-                    "id": "f54070cc-e4dd-4931-ad99-f56c30b9116f",
+                    "id": "a6d83a6b-9736-4515-a253-a7aff182e259",
                     "type": "text/javascript",
                     "exec": [
                       "pm.test(\"403\",()=>pm.response.to.have.status(403));"
                     ],
-                    "_lastExecutionId": "b96f7848-8871-451e-96b8-a6a4062ad95b"
+                    "_lastExecutionId": "437e6b5e-0513-447d-b72b-5e8deb379986"
                   }
                 }
               ]
@@ -17429,24 +17429,23 @@
             }
           ],
           "info": {
-            "_postman_id": "c16d61b3-885c-43cd-912a-80f6c7f10c52",
+            "_postman_id": "1bbe8535-a7ee-4211-8ce4-a2fe160f391d",
             "name": "Visor PACS - Sprint 1",
             "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
           }
         },
         "cursor": {
-          "ref": "457f014c-806e-4289-921d-c3a78881d45e",
+          "ref": "0fccc0c3-9d5c-4a98-88cc-ccf533390935",
           "length": 10,
           "cycles": 1,
           "position": 9,
           "iteration": 0,
-          "httpRequestId": "714db3eb-baeb-4a9b-8fbb-0b4170eb39c0",
-          "scriptId": "f54070cc-e4dd-4931-ad99-f56c30b9116f",
-          "execution": "b96f7848-8871-451e-96b8-a6a4062ad95b"
+          "httpRequestId": "50c5ee23-f793-4592-aa95-8013b357357b",
+          "scriptId": "a6d83a6b-9736-4515-a253-a7aff182e259",
+          "execution": "437e6b5e-0513-447d-b72b-5e8deb379986"
         }
       }
     ],
     "error": null
   }
 }
-
