@@ -5,12 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import pe.upn.visorpacs.config.AppProperties;
 import pe.upn.visorpacs.repository.UsuarioRepository;
 import pe.upn.visorpacs.usuario.UsuarioService;
 
-/** Crea un médico (y opcionalmente un paciente) de prueba al arrancar. Solo si BOOTSTRAP_ENABLED=true. */
+/** Crea un médico (y opcionalmente un paciente y un administrador) de prueba al arrancar. Solo si BOOTSTRAP_ENABLED=true. */
 @Component
 @ConditionalOnProperty(prefix = "app.bootstrap", name = "enabled", havingValue = "true")
 public class BootstrapUserRunner implements ApplicationRunner {
@@ -20,11 +21,14 @@ public class BootstrapUserRunner implements ApplicationRunner {
     private final AppProperties props;
     private final UsuarioRepository usuarios;
     private final UsuarioService servicio;
+    private final Environment env;
 
-    public BootstrapUserRunner(AppProperties props, UsuarioRepository usuarios, UsuarioService servicio) {
+    public BootstrapUserRunner(AppProperties props, UsuarioRepository usuarios, UsuarioService servicio,
+                               Environment env) {
         this.props = props;
         this.usuarios = usuarios;
         this.servicio = servicio;
+        this.env = env;
     }
 
     @Override
@@ -40,6 +44,22 @@ public class BootstrapUserRunner implements ApplicationRunner {
             log.info("Usuario inicial '{}' creado.", cfg.username());
         }
         crearPacienteDePrueba(cfg);
+        crearAdminDePrueba();
+    }
+
+    private void crearAdminDePrueba() {
+        String username = env.getProperty("app.bootstrap.admin-username", "");
+        if (username.isBlank()) {
+            return; // administrador de prueba no configurado
+        }
+        String clave = env.getProperty("app.bootstrap.admin-password", "");
+        if (clave.length() < UsuarioService.CLAVE_MINIMA) {
+            throw new IllegalStateException("BOOTSTRAP_ADMIN_PASSWORD debe tener al menos 12 caracteres.");
+        }
+        if (usuarios.findByUsername(username).isEmpty()) {
+            servicio.crearAdmin(username, clave, "Administrador", "de Prueba", username + "@example.com");
+            log.info("Administrador de prueba '{}' creado.", username);
+        }
     }
 
     private void crearPacienteDePrueba(AppProperties.Bootstrap cfg) {

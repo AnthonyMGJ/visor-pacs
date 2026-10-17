@@ -24,6 +24,8 @@ spring:
 
 server:
   port: 8080
+  # Detrás de Caddy (HTTPS): toma la IP real del cliente de X-Forwarded-For (solo si el proxy es de la red interna).
+  forward-headers-strategy: native
   error:
     include-message: never
     include-stacktrace: never
@@ -37,7 +39,29 @@ management:
     health:
       show-details: never
 
+# Documentación OpenAPI: /swagger-ui.html y /v3/api-docs. En producción se puede apagar con OPENAPI_ENABLED=false.
+springdoc:
+  api-docs:
+    enabled: ${OPENAPI_ENABLED:true}
+  swagger-ui:
+    enabled: ${OPENAPI_ENABLED:true}
+    tags-sorter: alpha
+    operations-sorter: alpha
+
 app:
+  sesion:
+    # Segundos que se recuerda el estado de una cuenta antes de releerlo de la base (los cambios hechos
+    # desde esta aplicación invalidan la memoria al instante; esto solo cubre cambios por otra vía).
+    cache-cuenta-segundos: ${SESION_CACHE_SEGUNDOS:30}
+    # Tope absoluto: aunque renueve el token mientras trabaja, tras estas horas debe escribir su clave otra vez.
+    duracion-maxima-horas: ${SESION_DURACION_MAXIMA_HORAS:8}
+  limite-login:
+    # Solicitudes de inicio de sesión por IP dentro de la ventana (0 = sin límite). Responde 429.
+    max-solicitudes: ${LIMITE_LOGIN_MAX:30}
+    ventana-segundos: ${LIMITE_LOGIN_VENTANA_SEGUNDOS:60}
+  auditoria:
+    # La apertura de un estudio se registra una vez por usuario y estudio dentro de esta ventana.
+    apertura-ventana-minutos: ${AUDITORIA_VENTANA_MINUTOS:15}
   jwt:
     secret: ${JWT_SECRET}
     issuer: visor-pacs
@@ -62,3 +86,5 @@ app:
     paciente-password: ${BOOTSTRAP_PACIENTE_PASSWORD:}
     paciente-dicom-id: ${BOOTSTRAP_PACIENTE_DICOM_ID:PRUEBA-0001}
     paciente-nombres: Paciente
+    admin-username: ${BOOTSTRAP_ADMIN_USERNAME:}
+    admin-password: ${BOOTSTRAP_ADMIN_PASSWORD:}

@@ -1,0 +1,8 @@
+# Perfil opcional "privilegios-minimos" (SPRING_PROFILES_ACTIVE=privilegios-minimos).
+# La aplicación se conecta con un usuario sin permiso para modificar la estructura de la base ni para
+# borrar o editar la auditoría (spring.datasource.*), y Flyway migra con otro usuario con más privilegios.
+# Ver docs/despliegue/DESPLIEGUE.md ("Permisos mínimos de la base de datos").
+spring:
+  flyway:
+    user: ${DB_MIGRACION_USER}
+    password: ${DB_MIGRACION_PASSWORD}

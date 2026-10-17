@@ -1,0 +1,32 @@
+# HTTPS con reverse proxy (HT02 / T38). Se usa JUNTO al compose base:
+#   docker compose -f docker-compose.yml -f docker-compose.https.yml up -d --build
+# Requiere Docker Compose 2.24+ (por "!reset") y en .env:  DOMINIO=visor.tudominio.com  OPENAPI_ENABLED=false
+# El DNS del dominio debe apuntar al servidor y los puertos 80 y 443 estar abiertos (Caddy obtiene el certificado solo).
+name: visor-pacs
+
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [backend]
+    environment:
+      DOMINIO: ${DOMINIO:?Falta DOMINIO en .env (p. ej. visor.tudominio.com, o localhost para ensayar)}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frontend/dist:/srv/frontend:ro      # opcional: salida de "npm run build"
+      - caddy_data:/data                       # certificados: no borrar este volumen
+      - caddy_config:/config
+    networks: [pacs-net]
+
+  # El backend deja de publicarse: solo se llega a él a través de Caddy (HTTPS).
+  backend:
+    ports: !reset []
+
+  # Orthanc y MySQL ya solo escuchan en 127.0.0.1 del servidor (compose base).
+
+volumes:
+  caddy_data:
+  caddy_config:

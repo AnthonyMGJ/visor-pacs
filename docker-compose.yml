@@ -7,6 +7,8 @@ services:
   mysql:
     image: mysql:8.4
     restart: unless-stopped
+    # Necesario para crear los triggers de la auditoría (V5) con el registro binario activo.
+    command: ["--log-bin-trust-function-creators=1"]
     environment:
       MYSQL_DATABASE: ${DB_NAME:-visor_pacs}
       MYSQL_USER: ${DB_USER:?Falta DB_USER en .env}
@@ -71,6 +73,12 @@ services:
       BOOTSTRAP_PACIENTE_USERNAME: ${BOOTSTRAP_PACIENTE_USERNAME:-}
       BOOTSTRAP_PACIENTE_PASSWORD: ${BOOTSTRAP_PACIENTE_PASSWORD:-}
       BOOTSTRAP_PACIENTE_DICOM_ID: ${BOOTSTRAP_PACIENTE_DICOM_ID:-PRUEBA-0001}
+      BOOTSTRAP_ADMIN_USERNAME: ${BOOTSTRAP_ADMIN_USERNAME:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      OPENAPI_ENABLED: ${OPENAPI_ENABLED:-true}
+      SESION_DURACION_MAXIMA_HORAS: ${SESION_DURACION_MAXIMA_HORAS:-8}
+      LIMITE_LOGIN_MAX: ${LIMITE_LOGIN_MAX:-30}
+      LIMITE_LOGIN_VENTANA_SEGUNDOS: ${LIMITE_LOGIN_VENTANA_SEGUNDOS:-60}
     ports:
       - "8080:8080"             # accesible desde la red Wi-Fi para probar con el celular
     networks: [pacs-net]

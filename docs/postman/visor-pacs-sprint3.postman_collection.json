@@ -1,0 +1,2995 @@
+{
+  "info": {
+    "name": "Visor PACS - Sprint 3 (ADMIN, permisos, sesion y auditoria)",
+    "description": "Requiere un ADMIN y un MEDICO creados (BOOTSTRAP_ADMIN_* / BOOTSTRAP_* o docker/crear-usuario). Pon las claves en las variables de la coleccion y ejecuta TODAS las peticiones en orden (Runner de Postman o Newman). Cada corrida crea un medico con nombre unico.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin.demo"
+    },
+    {
+      "key": "adminPassword",
+      "value": "PON_AQUI_LA_CLAVE_DEL_ADMIN"
+    },
+    {
+      "key": "medicoUsername",
+      "value": "medico.demo"
+    },
+    {
+      "key": "medicoPassword",
+      "value": "PON_AQUI_TU_BOOTSTRAP_PASSWORD"
+    },
+    {
+      "key": "claveNueva",
+      "value": "Clave-QA-12345-xyz"
+    },
+    {
+      "key": "nuevoUsuario",
+      "value": ""
+    },
+    {
+      "key": "nuevoId",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": ""
+    },
+    {
+      "key": "claveFinal",
+      "value": "Clave-QA-Final-98765"
+    },
+    {
+      "key": "claveFinal2",
+      "value": "Clave-QA-Final2-98765"
+    },
+    {
+      "key": "claveAnterior",
+      "value": ""
+    },
+    {
+      "key": "claveTemporal",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "tokenMedico",
+      "value": ""
+    },
+    {
+      "key": "tokenNuevo",
+      "value": ""
+    },
+    {
+      "key": "tokenA",
+      "value": ""
+    },
+    {
+      "key": "tokenB",
+      "value": ""
+    },
+    {
+      "key": "tokenC",
+      "value": ""
+    },
+    {
+      "key": "tokenTemp",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 ADMIN: login -> 200, rol ADMIN, guarda token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{adminUsername}}\", \"password\": \"{{adminPassword}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// usuario único para esta corrida: evita choques con corridas anteriores",
+              "pm.collectionVariables.set('nuevoUsuario', 'qa.' + Date.now().toString(36));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('rol ADMIN', () => pm.expect(pm.response.json().rol).to.eql('ADMIN'));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenAdmin', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 MEDICO: login -> 200 y guarda token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{medicoUsername}}\", \"password\": \"{{medicoPassword}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('rol MEDICO', () => pm.expect(pm.response.json().rol).to.eql('MEDICO'));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenMedico', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 CA08.4 MEDICO llama a gestion de usuarios -> 403",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenMedico}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 ADMIN no ve imagenes: /dicomweb/studies -> 403",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Gestion de usuarios SIN token -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 ADMIN: /auth/me -> 200, rol ADMIN",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('rol ADMIN', () => pm.expect(pm.response.json().rol).to.eql('ADMIN'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 ADMIN: busca su propia cuenta y guarda su id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios?q={{adminUsername}}&rol=ADMIN",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "{{adminUsername}}"
+            },
+            {
+              "key": "rol",
+              "value": "ADMIN"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const yo = pm.response.json().contenido.find(u => u.username === pm.collectionVariables.get('adminUsername'));",
+              "pm.test('encuentra al admin', () => pm.expect(yo).to.be.an('object'));",
+              "pm.collectionVariables.set('adminId', yo.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 CA08.1 ADMIN registra un medico -> 201, con ACCESO_ESTUDIOS y sin clave",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"clave\": \"{{claveNueva}}\", \"nombres\": \"QA\", \"apellidos\": \"Postman\", \"email\": \"{{nuevoUsuario}}@qa.example.com\", \"rol\": \"MEDICO\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const j = pm.response.json();",
+              "pm.test('medico activo con permiso', () => { pm.expect(j.rol).to.eql('MEDICO'); pm.expect(j.activo).to.eql(true); pm.expect(j.permisos).to.include('ACCESO_ESTUDIOS'); });",
+              "pm.test('no devuelve la clave', () => { pm.expect(j.password).to.be.undefined; pm.expect(j.clave).to.be.undefined; });",
+              "pm.collectionVariables.set('nuevoId', j.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Registrar el mismo usuario otra vez -> 409",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"clave\": \"{{claveNueva}}\", \"nombres\": \"QA\", \"apellidos\": \"Postman\", \"email\": \"{{nuevoUsuario}}@qa.example.com\", \"rol\": \"MEDICO\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Registrar con clave corta -> 400 con detalle del campo",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}x\", \"clave\": \"corta\", \"nombres\": \"QA\", \"apellidos\": \"P\", \"email\": \"x@qa.example.com\", \"rol\": \"MEDICO\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));",
+              "pm.test('indica el campo clave', () => pm.expect(pm.response.json().errores.map(e => e.campo)).to.include('clave'));",
+              "pm.test('no repite la clave enviada', () => pm.expect(pm.response.text()).to.not.include('corta'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 No se puede crear un ADMIN por la API -> 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"clave\": \"{{claveNueva}}\", \"nombres\": \"QA\", \"apellidos\": \"Postman\", \"email\": \"{{nuevoUsuario}}@qa.example.com\", \"rol\": \"ADMIN\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Medico nuevo: login -> 200 y guarda token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenNuevo', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Medico nuevo: lista estudios -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 CA08.2 ADMIN revoca ACCESO_ESTUDIOS -> 200 sin permisos",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/permisos/ACCESO_ESTUDIOS",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "permisos",
+            "ACCESO_ESTUDIOS"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('sin permisos', () => pm.expect(pm.response.json().permisos).to.eql([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 CA08.2 Medico (mismo token) lista estudios -> 403 en su siguiente solicitud",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 CA08.3 Medico sin permisos no puede autenticarse -> 401",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 ADMIN vuelve a asignar el permiso -> 200",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/permisos/ACCESO_ESTUDIOS",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "permisos",
+            "ACCESO_ESTUDIOS"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('con permiso', () => pm.expect(pm.response.json().permisos).to.include('ACCESO_ESTUDIOS'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Medico (mismo token) vuelve a ver estudios -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 CA08.1 ADMIN edita nombres y correo -> 200",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nombres\": \"QA Editado\", \"apellidos\": \"Postman\", \"email\": \"{{nuevoUsuario}}@qa.example.com\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('cambio guardado', () => pm.expect(pm.response.json().nombres).to.eql('QA Editado'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 CA12.2 ADMIN desactiva al medico -> 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/estado",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "estado"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"activo\": false}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('inactivo', () => pm.expect(pm.response.json().activo).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "21 CA12.2 Medico con sesion abierta: su siguiente solicitud se rechaza -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "22 CA08.3 Cuenta inactiva no puede autenticarse -> 401",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "23 ADMIN reactiva la cuenta -> 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/estado",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "estado"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"activo\": true}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('activo', () => pm.expect(pm.response.json().activo).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "24 El token anterior sigue revocado tras reactivar -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "25 Medico reactivado: login nuevo -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenNuevo', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "26 ADMIN no puede desactivarse a si mismo -> 409",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{adminId}}/estado",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{adminId}}",
+            "estado"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"activo\": false}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "27 Permiso inexistente -> 404",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/permisos/NO_EXISTE",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "permisos",
+            "NO_EXISTE"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "28 Listado: filtra por texto/rol, pagina y limita el tamano",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios?q={{nuevoUsuario}}&rol=MEDICO&tamano=5000",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "{{nuevoUsuario}}"
+            },
+            {
+              "key": "rol",
+              "value": "MEDICO"
+            },
+            {
+              "key": "tamano",
+              "value": "5000"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "pm.test('estructura paginada', () => { pm.expect(j).to.have.keys(['contenido','pagina','tamano','total','totalPaginas']); });",
+              "pm.test('encuentra al medico nuevo', () => pm.expect(j.contenido.map(u => u.username)).to.include(pm.collectionVariables.get('nuevoUsuario')));",
+              "pm.test('tamano acotado a 100', () => pm.expect(j.tamano).to.be.at.most(100));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "29 Renovar sesion -> 200 y token nuevo",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/renovar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "renovar"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenNuevo', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "30 Medico: cierra sesion -> 204",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "31 Tras cerrar sesion el token ya no sirve -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "32 CA10.1/10.2 Auditoria: eventos del medico nuevo (inicios de sesion, con IP)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria?usuario={{nuevoUsuario}}&tamano=50",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ],
+          "query": [
+            {
+              "key": "usuario",
+              "value": "{{nuevoUsuario}}"
+            },
+            {
+              "key": "tamano",
+              "value": "50"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "pm.test('hay eventos', () => pm.expect(j.total).to.be.at.least(3));",
+              "const login = j.contenido.filter(e => e.tipo === 'INICIO_SESION');",
+              "pm.test('exitos y fallos de login registrados', () => { pm.expect(login.some(e => e.resultado === 'EXITO')).to.eql(true); pm.expect(login.some(e => e.resultado === 'FALLO')).to.eql(true); });",
+              "pm.test('cada evento trae usuario, fecha e IP', () => j.contenido.forEach(e => { pm.expect(e.username).to.eql(pm.collectionVariables.get('nuevoUsuario')); pm.expect(e.fecha).to.be.a('string'); pm.expect(e.ip).to.be.a('string'); }));",
+              "pm.test('el mas reciente va primero', () => pm.expect(Date.parse(j.contenido[0].fecha) >= Date.parse(j.contenido[j.contenido.length-1].fecha)).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "33 CA10.3 Auditoria: filtro por tipo y resultado -> solo coincidencias",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria?usuario={{nuevoUsuario}}&tipo=INICIO_SESION&resultado=FALLO",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ],
+          "query": [
+            {
+              "key": "usuario",
+              "value": "{{nuevoUsuario}}"
+            },
+            {
+              "key": "tipo",
+              "value": "INICIO_SESION"
+            },
+            {
+              "key": "resultado",
+              "value": "FALLO"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.test('solo fallos de login', () => { pm.expect(j.total).to.be.at.least(1); j.contenido.forEach(e => { pm.expect(e.tipo).to.eql('INICIO_SESION'); pm.expect(e.resultado).to.eql('FALLO'); }); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "34 CA10.3 Auditoria: fecha futura -> sin eventos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria?usuario={{nuevoUsuario}}&desde=2999-01-01T00:00:00Z",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ],
+          "query": [
+            {
+              "key": "usuario",
+              "value": "{{nuevoUsuario}}"
+            },
+            {
+              "key": "desde",
+              "value": "2999-01-01T00:00:00Z"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('sin eventos', () => pm.expect(pm.response.json().total).to.eql(0));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "35 Auditoria: tipo invalido -> 400",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria?tipo=NO_ES_UN_TIPO",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ],
+          "query": [
+            {
+              "key": "tipo",
+              "value": "NO_ES_UN_TIPO"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "36 Auditoria: MEDICO -> 403",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenMedico}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "37 Auditoria: sin token -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "38 CA10.4 Auditoria: no se puede borrar por la API -> 405",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 405', () => pm.response.to.have.status(405));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "39 CA10.4 Auditoria: no se puede modificar por la API -> 405",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 405', () => pm.response.to.have.status(405));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "40 Ruta inexistente de administracion -> 404 en formato uniforme",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/no-existe",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "no-existe"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "41 Documentacion OpenAPI disponible -> 200 (si OPENAPI_ENABLED=true)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v3/api-docs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v3",
+            "api-docs"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('documenta login, usuarios y auditoria', () => { const p = pm.response.json().paths; pm.expect(p).to.have.property('/api/auth/login'); pm.expect(p).to.have.property('/api/admin/usuarios'); pm.expect(p).to.have.property('/api/admin/auditoria'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "42 Medico: login desde el dispositivo A -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenA', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "43 Medico: login desde el dispositivo B -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenB', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "44 Cerrar SOLO el dispositivo A (soloEsta=true) -> 204",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout?soloEsta=true",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ],
+          "query": [
+            {
+              "key": "soloEsta",
+              "value": "true"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "45 El token del dispositivo A ya no sirve -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenA}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "46 El token del dispositivo B sigue vigente -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "47 Cambiar clave con la actual incorrecta -> 400 (no 401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/cambiar-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "cambiar-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"claveActual\": \"no-es-la-clave-actual\", \"claveNueva\": \"{{claveFinal}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));",
+              "pm.test('mensaje claro', () => pm.expect(pm.response.json().title).to.eql('Clave actual incorrecta'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "48 Tras ese 400 la sesion sigue vigente -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "49 Cambiar clave con una clave nueva corta -> 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/cambiar-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "cambiar-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"claveActual\": \"{{claveNueva}}\", \"claveNueva\": \"corta\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "50 Cambiar clave correctamente -> 200 con token nuevo",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/cambiar-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "cambiar-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"claveActual\": \"{{claveNueva}}\", \"claveNueva\": \"{{claveFinal}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenC', j.accessToken);",
+              "pm.test('ya no exige cambio de clave', () => pm.expect(pm.response.json().debeCambiarClave).to.not.eql(true));",
+              "pm.collectionVariables.set('claveAnterior', pm.collectionVariables.get('claveNueva')); pm.collectionVariables.set('claveNueva', pm.collectionVariables.get('claveFinal'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "51 Cambiar la clave cierra las demas sesiones: token B -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenB}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "52 El token nuevo funciona -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenC}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "53 La clave anterior ya no entra -> 401",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveAnterior}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "54 La clave nueva entra -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenNuevo', j.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "55 MEDICO no puede restablecer claves -> 403",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenMedico}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "56 ADMIN no puede restablecer su propia clave -> 409",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{adminId}}/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{adminId}}",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "57 ADMIN restablece la clave del medico -> 200 con clave temporal",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios/{{nuevoId}}/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios",
+            "{{nuevoId}}",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "pm.test('clave temporal de 12+ caracteres', () => pm.expect(j.claveTemporal).to.be.a('string').with.length.of.at.least(12));",
+              "pm.collectionVariables.set('claveTemporal', j.claveTemporal);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "58 El restablecimiento cierra la sesion abierta del medico -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "59 La clave anterior ya no entra tras restablecer -> 401",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "60 Login con la clave temporal -> 200 y debeCambiarClave=true",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{nuevoUsuario}}\", \"password\": \"{{claveTemporal}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenTemp', j.accessToken);",
+              "pm.test('debe cambiar la clave', () => pm.expect(pm.response.json().debeCambiarClave).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "61 Con clave temporal no se ven estudios -> 403 CLAVE_TEMPORAL",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenTemp}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('formato problem+json', () => pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/problem+json'));",
+              "pm.test('codigo CLAVE_TEMPORAL', () => pm.expect(pm.response.json().codigo).to.eql('CLAVE_TEMPORAL'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "62 Con clave temporal tampoco se renueva el token -> 403",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/renovar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "renovar"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenTemp}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "pm.test('codigo CLAVE_TEMPORAL', () => pm.expect(pm.response.json().codigo).to.eql('CLAVE_TEMPORAL'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "63 Con clave temporal si se puede ver el perfil -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenTemp}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "64 Cambiar la clave temporal -> 200 y ya no exige cambio",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/cambiar-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "cambiar-clave"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenTemp}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"claveActual\": \"{{claveTemporal}}\", \"claveNueva\": \"{{claveFinal2}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json(); pm.expect(j.accessToken).to.be.a('string').and.not.empty; pm.collectionVariables.set('tokenNuevo', j.accessToken);",
+              "pm.test('sin marca de clave temporal', () => pm.expect(pm.response.json().debeCambiarClave).to.not.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "65 Con la clave definitiva ya se ven estudios -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenNuevo}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "66 Auditoria: cambios de clave y restablecimiento registrados, sin claves",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/auditoria?usuario={{nuevoUsuario}}&tamano=100",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "auditoria"
+          ],
+          "query": [
+            {
+              "key": "usuario",
+              "value": "{{nuevoUsuario}}"
+            },
+            {
+              "key": "tamano",
+              "value": "100"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "const tipos = j.contenido.map(e => e.tipo);",
+              "pm.test('registra CLAVE_CAMBIADA', () => pm.expect(tipos).to.include('CLAVE_CAMBIADA'));",
+              "pm.test('ninguna clave aparece en la auditoria', () => { const t = pm.response.text(); ['claveNueva','claveFinal','claveFinal2','claveTemporal','claveAnterior'].forEach(n => { const v = pm.collectionVariables.get(n); if (v) pm.expect(t).to.not.include(v); }); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "67 ADMIN: cierra sesion -> 204",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

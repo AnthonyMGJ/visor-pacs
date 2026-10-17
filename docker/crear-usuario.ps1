@@ -1,9 +1,10 @@
 # Crea un médico o un paciente (la clave se pide por teclado y se cifra con BCrypt).
 # Uso (desde backend/, con `docker compose up -d` ya corriendo):
 #   .\docker\crear-usuario.ps1 -Rol MEDICO -Usuario ana.perez -Nombres "Ana" -Apellidos "Pérez" -Email ana@clinica.pe
+#   .\docker\crear-usuario.ps1 -Rol ADMIN -Usuario admin.ti -Nombres "Admin" -Apellidos "TI" -Email admin@clinica.pe
 #   .\docker\crear-usuario.ps1 -Rol PACIENTE -Usuario juan.diaz -Nombres "Juan" -Apellidos "Díaz" -Email juan@correo.pe -DicomId PRUEBA-0001
 param(
-  [Parameter(Mandatory)][ValidateSet('MEDICO','PACIENTE')][string]$Rol,
+  [Parameter(Mandatory)][ValidateSet('MEDICO','PACIENTE','ADMIN')][string]$Rol,
   [Parameter(Mandatory)][string]$Usuario,
   [Parameter(Mandatory)][string]$Nombres,
   [Parameter(Mandatory)][string]$Apellidos,

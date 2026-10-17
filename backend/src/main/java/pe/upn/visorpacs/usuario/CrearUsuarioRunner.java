@@ -48,7 +48,8 @@ public class CrearUsuarioRunner implements ApplicationRunner {
                 case Roles.MEDICO -> servicio.crearMedico(username, clave, nombres, apellidos, email);
                 case Roles.PACIENTE -> servicio.crearPaciente(username, clave, nombres, apellidos, email,
                         env.getProperty("app.cli.dicom-id", ""));
-                default -> throw new UsuarioInvalidoException("El rol debe ser MEDICO o PACIENTE.");
+                case Roles.ADMIN -> servicio.crearAdmin(username, clave, nombres, apellidos, email);
+                default -> throw new UsuarioInvalidoException("El rol debe ser MEDICO, PACIENTE o ADMIN.");
             };
             log.info("Usuario '{}' creado con rol {}.", creado.getUsername(), creado.getRol().getNombre());
         } catch (UsuarioInvalidoException | IllegalStateException e) {

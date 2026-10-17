@@ -23,3 +23,6 @@ frontend/dist/
 !docker/sample-dicom/sinteticos/*.dcm
 
 .claude/
+
+# Evidencias de pruebas locales (pueden contener tokens/claves)
+docs/pruebas/evidencias/despues/

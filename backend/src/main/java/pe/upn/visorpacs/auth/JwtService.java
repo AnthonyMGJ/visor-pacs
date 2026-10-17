@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import pe.upn.visorpacs.config.AppProperties;
 import pe.upn.visorpacs.domain.Usuario;
 import pe.upn.visorpacs.domain.Roles;
+import pe.upn.visorpacs.sesion.SesionTokenValidator;
 
 @Service
 public class JwtService {
@@ -26,7 +27,16 @@ public class JwtService {
         this.clock = clock;
     }
 
+    /** Token de una sesión que empieza ahora (inicio de sesión con clave o cambio de clave). */
     public IssuedToken issue(Usuario usuario) {
+        return issue(usuario, clock.instant());
+    }
+
+    /**
+     * Token de una sesión que empezó en inicioSesion (al renovar se conserva ese instante, para poder aplicar
+     * el tope absoluto de duración).
+     */
+    public IssuedToken issue(Usuario usuario, Instant inicioSesion) {
         Instant now = clock.instant();
         long ttlSeconds = props.jwt().ttlMinutes() * 60;
         String rol = usuario.getRol().getNombre();
@@ -38,7 +48,15 @@ public class JwtService {
                 .subject(usuario.getUsername())
                 .id(UUID.randomUUID().toString())
                 .claim("roles", List.of(rol))
-                .claim("nombre", nombre);
+                .claim("nombre", nombre)
+                .claim(SesionTokenValidator.CLAIM_VERSION, usuario.getSesionVersion())
+                .claim(SesionTokenValidator.CLAIM_INICIO_SESION, inicioSesion.getEpochSecond());
+        if (usuario.isDebeCambiarClave()) {
+            claims.claim(SesionTokenValidator.CLAIM_CLAVE_TEMPORAL, true);
+        }
+        if (usuario.getId() != null) {
+            claims.claim(SesionTokenValidator.CLAIM_USUARIO, usuario.getId());
+        }
         if (Roles.PACIENTE.equals(rol)) {
             if (usuario.getPaciente() == null) {
                 throw new IllegalStateException("El usuario con rol PACIENTE no tiene un paciente asociado.");
@@ -48,6 +66,6 @@ public class JwtService {
         }
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         String token = encoder.encode(JwtEncoderParameters.from(header, claims.build())).getTokenValue();
-        return new IssuedToken(token, ttlSeconds, rol, nombre);
+        return new IssuedToken(token, ttlSeconds, rol, nombre, usuario.isDebeCambiarClave());
     }
 }

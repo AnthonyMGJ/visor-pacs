@@ -1,0 +1,12 @@
+# Opcional: el backend se conecta con 'visor_app' (permisos mínimos; la auditoría es solo INSERT/SELECT)
+# y Flyway migra con la cuenta de siempre (DB_USER). Requiere haber ejecutado docker/privilegios-minimos.*
+# y definir APP_DB_PASSWORD en el .env.
+# Uso:  docker compose -f docker-compose.yml -f docker-compose.privilegios.yml up -d
+services:
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: privilegios-minimos
+      DB_USER: visor_app
+      DB_PASSWORD: ${APP_DB_PASSWORD:?Falta APP_DB_PASSWORD en .env}
+      DB_MIGRACION_USER: ${DB_USER:?Falta DB_USER en .env}
+      DB_MIGRACION_PASSWORD: ${DB_PASSWORD:?Falta DB_PASSWORD en .env}

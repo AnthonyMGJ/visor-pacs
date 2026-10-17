@@ -1,367 +1,370 @@
 {
-    "info":  {
-                 "name":  "Visor PACS - Sprint 1",
-                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-             },
-    "auth":  {
-                 "type":  "bearer",
-                 "bearer":  [
-                                {
-                                    "key":  "token",
-                                    "value":  "{{token}}",
-                                    "type":  "string"
-                                }
-                            ]
-             },
-    "variable":  [
-                     {
-                         "key":  "baseUrl",
-                         "value":  "http://localhost:8080"
-                     },
-                     {
-                         "key":  "username",
-                         "value":  "medico.demo"
-                     },
-                     {
-                         "key":  "password",
-                         "value":  "PON_AQUI_TU_BOOTSTRAP_PASSWORD"
-                     },
-                     {
-                         "key":  "token",
-                         "value":  ""
-                     },
-                     {
-                         "key":  "pacienteUsername",
-                         "value":  "paciente.demo"
-                     },
-                     {
-                         "key":  "pacientePassword",
-                         "value":  "PON_AQUI_LA_CLAVE_DEL_PACIENTE"
-                     },
-                     {
-                         "key":  "tokenPaciente",
-                         "value":  ""
-                     }
-                 ],
-    "item":  [
-                 {
-                     "name":  "01 Health (público) -\u003e 200",
-                     "request":  {
-                                     "method":  "GET",
-                                     "header":  [
-
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/actuator/health",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "actuator",
-                                                              "health"
-                                                          ]
-                                             },
-                                     "auth":  {
-                                                  "type":  "noauth"
-                                              }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027200\u0027, () =\u003e pm.response.to.have.status(200));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "02 Login correcto -\u003e 200 y guarda el token",
-                     "request":  {
-                                     "method":  "POST",
-                                     "header":  [
-                                                    {
-                                                        "key":  "Content-Type",
-                                                        "value":  "application/json"
-                                                    }
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/api/auth/login",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "api",
-                                                              "auth",
-                                                              "login"
-                                                          ]
-                                             },
-                                     "auth":  {
-                                                  "type":  "noauth"
-                                              },
-                                     "body":  {
-                                                  "mode":  "raw",
-                                                  "raw":  "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
-                                              }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027200\u0027, () =\u003e pm.response.to.have.status(200));",
-                                                                   "pm.collectionVariables.set(\u0027token\u0027, pm.response.json().accessToken);"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "03 Login con clave incorrecta -\u003e 401",
-                     "request":  {
-                                     "method":  "POST",
-                                     "header":  [
-                                                    {
-                                                        "key":  "Content-Type",
-                                                        "value":  "application/json"
-                                                    }
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/api/auth/login",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "api",
-                                                              "auth",
-                                                              "login"
-                                                          ]
-                                             },
-                                     "auth":  {
-                                                  "type":  "noauth"
-                                              },
-                                     "body":  {
-                                                  "mode":  "raw",
-                                                  "raw":  "{\n  \"username\": \"{{username}}\",\n  \"password\": \"clave-incorrecta\"\n}"
-                                              }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027401\u0027, () =\u003e pm.response.to.have.status(401));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "04 Listar estudios (QIDO-RS) con token -\u003e 200",
-                     "request":  {
-                                     "method":  "GET",
-                                     "header":  [
-
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/api/dicomweb/studies",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "api",
-                                                              "dicomweb",
-                                                              "studies"
-                                                          ]
-                                             }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027200\u0027, () =\u003e pm.response.to.have.status(200));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "05 Estudios SIN token -\u003e 401",
-                     "request":  {
-                                     "method":  "GET",
-                                     "header":  [
-
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/api/dicomweb/studies",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "api",
-                                                              "dicomweb",
-                                                              "studies"
-                                                          ]
-                                             },
-                                     "auth":  {
-                                                  "type":  "noauth"
-                                              }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027401\u0027, () =\u003e pm.response.to.have.status(401));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "06 Ruta no permitida -\u003e 400",
-                     "request":  {
-                                     "method":  "GET",
-                                     "header":  [
-
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/api/dicomweb/tools",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "api",
-                                                              "dicomweb",
-                                                              "tools"
-                                                          ]
-                                             }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027400\u0027, () =\u003e pm.response.to.have.status(400));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "07 Logout -\u003e 204",
-                     "request":  {
-                                     "method":  "POST",
-                                     "header":  [
-
-                                                ],
-                                     "url":  {
-                                                 "raw":  "{{baseUrl}}/api/auth/logout",
-                                                 "host":  [
-                                                              "{{baseUrl}}"
-                                                          ],
-                                                 "path":  [
-                                                              "api",
-                                                              "auth",
-                                                              "logout"
-                                                          ]
-                                             }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\u0027204\u0027, () =\u003e pm.response.to.have.status(204));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "08 Login paciente -\u003e 200, rol PACIENTE y guarda token",
-                     "request":  {
-                                     "method":  "POST",
-                                     "header":  [
-                                                    {
-                                                        "key":  "Content-Type",
-                                                        "value":  "application/json"
-                                                    }
-                                                ],
-                                     "url":  "{{baseUrl}}/api/auth/login",
-                                     "body":  {
-                                                  "mode":  "raw",
-                                                  "raw":  "{\"username\":\"{{pacienteUsername}}\",\"password\":\"{{pacientePassword}}\"}"
-                                              }
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\"200 y rol PACIENTE\",()=\u003e{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "09 Paciente: lista estudios -\u003e 200 y solo los suyos",
-                     "request":  {
-                                     "method":  "GET",
-                                     "header":  [
-                                                    {
-                                                        "key":  "Authorization",
-                                                        "value":  "Bearer {{tokenPaciente}}"
-                                                    }
-                                                ],
-                                     "url":  "{{baseUrl}}/api/dicomweb/studies"
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\"200\",()=\u003epm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=\u003e{const l=pm.response.json();pm.expect(l.every(e=\u003ee[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 },
-                 {
-                     "name":  "10 Paciente: /series suelto -\u003e 403",
-                     "request":  {
-                                     "method":  "GET",
-                                     "header":  [
-                                                    {
-                                                        "key":  "Authorization",
-                                                        "value":  "Bearer {{tokenPaciente}}"
-                                                    }
-                                                ],
-                                     "url":  "{{baseUrl}}/api/dicomweb/series"
-                                 },
-                     "event":  [
-                                   {
-                                       "listen":  "test",
-                                       "script":  {
-                                                      "type":  "text/javascript",
-                                                      "exec":  [
-                                                                   "pm.test(\"403\",()=\u003epm.response.to.have.status(403));"
-                                                               ]
-                                                  }
-                                   }
-                               ]
-                 }
-             ]
+  "info": {
+    "name": "Visor PACS - Sprint 1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "username",
+      "value": "medico.demo"
+    },
+    {
+      "key": "password",
+      "value": "PON_AQUI_TU_BOOTSTRAP_PASSWORD"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "pacienteUsername",
+      "value": "paciente.demo"
+    },
+    {
+      "key": "pacientePassword",
+      "value": "PON_AQUI_LA_CLAVE_DEL_PACIENTE"
+    },
+    {
+      "key": "tokenPaciente",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health (público) -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "actuator",
+            "health"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Login correcto -> 200 y guarda el token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('token', pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Login con clave incorrecta -> 401",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"clave-incorrecta\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Listar estudios (QIDO-RS) con token -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Estudios SIN token -> 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/studies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "studies"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Ruta no permitida -> 400",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dicomweb/tools",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dicomweb",
+            "tools"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Logout -> 204",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Login paciente -> 200, rol PACIENTE y guarda token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"{{pacienteUsername}}\",\"password\":\"{{pacientePassword}}\"}"
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200 y rol PACIENTE\",()=>{pm.response.to.have.status(200);const j=pm.response.json();pm.expect(j.rol).to.eql(\"PACIENTE\");pm.collectionVariables.set(\"tokenPaciente\",j.accessToken);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Paciente: lista estudios -> 200 y solo los suyos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/dicomweb/studies",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenPaciente}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200\",()=>pm.response.to.have.status(200));pm.test(\"solo su PatientID\",()=>{const l=pm.response.json();pm.expect(l.every(e=>e[\"00100020\"].Value[0]===\"PRUEBA-0001\")).to.eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Paciente: /series suelto -> 403",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/dicomweb/series",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenPaciente}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"403\",()=>pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

@@ -1,0 +1,27 @@
+# Reverse proxy con HTTPS automático (Let's Encrypt) para el despliegue en la nube. Ver docs/despliegue/DESPLIEGUE.md.
+# DOMINIO = nombre público (p. ej. visor.midominio.com). Con DOMINIO=localhost Caddy usa un certificado local
+# de prueba (el navegador avisará que no es de confianza): sirve para ensayar T38 en tu propia máquina.
+{$DOMINIO} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# API y documentación -> backend (red interna). Orthanc NO se publica.
+	@api path /api/* /actuator/health /actuator/health/* /v3/api-docs /v3/api-docs/* /swagger-ui.html /swagger-ui/*
+	handle @api {
+		reverse_proxy backend:8080
+	}
+
+	# Frontend compilado (npm run build -> frontend/dist), con recarga de rutas del SPA.
+	handle {
+		root * /srv/frontend
+		try_files {path} /index.html
+		file_server
+	}
+}

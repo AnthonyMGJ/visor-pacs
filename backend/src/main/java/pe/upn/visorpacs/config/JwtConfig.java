@@ -6,7 +6,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pe.upn.visorpacs.sesion.SesionTokenValidator;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
@@ -31,10 +35,12 @@ public class JwtConfig {
     }
 
     @Bean
-    JwtDecoder jwtDecoder(SecretKey jwtSecretKey, AppProperties props) {
+    JwtDecoder jwtDecoder(SecretKey jwtSecretKey, AppProperties props, SesionTokenValidator sesion) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)
                 .macAlgorithm(MacAlgorithm.HS256).build();
-        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(props.jwt().issuer()));
+        // Firma/emisor/vencimiento + estado de la cuenta y versión de sesión (revocación inmediata).
+        OAuth2TokenValidator<Jwt> base = JwtValidators.createDefaultWithIssuer(props.jwt().issuer());
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(base, sesion));
         return decoder;
     }
 }
