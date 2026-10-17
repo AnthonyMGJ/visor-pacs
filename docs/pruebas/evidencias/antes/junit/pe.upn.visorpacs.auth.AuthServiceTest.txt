@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pe.upn.visorpacs.auth.AuthServiceTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.56 s -- in pe.upn.visorpacs.auth.AuthServiceTest
