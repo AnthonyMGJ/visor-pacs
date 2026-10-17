@@ -1,0 +1,4 @@
+﻿CP-09, CP-10, CP-11, CP-13, CP-15, CP-16, CP-17: BLOQUEADO. No existe el frontend en la linea base.
+CP-12: BLOQUEADO. Falta la serie de 180 cortes.
+CP-14: BLOQUEADO. Herramienta de medicion no construida (T49, Sprint 2).
+Se ejecutaran en la fase DESPUES con los mismos Ids.

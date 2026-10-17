@@ -1,0 +1,4 @@
+﻿NAME                   IMAGE                        COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+visor-pacs-backend-1   visor-pacs-backend           "java -jar /app/app.ÔÇª"   backend   51 seconds ago   Up 44 seconds             0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+visor-pacs-mysql-1     mysql:8.4                    "docker-entrypoint.sÔÇª"   mysql     52 seconds ago   Up 50 seconds (healthy)   127.0.0.1:3306->3306/tcp
+visor-pacs-orthanc-1   orthancteam/orthanc:latest   "/docker-entrypoint.ÔÇª"   orthanc   52 seconds ago   Up 49 seconds             127.0.0.1:8042->8042/tcp

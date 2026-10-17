@@ -1,0 +1,14 @@
+﻿openjdk version "21.0.12.1" 2026-08-18 LTS
+OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)
+Docker version 29.8.0, build 88096ef
+mvn NO instalado
+v24.20.0
+k6.exe v2.2.0 (commit/00a9a1b7f5, go1.26.5, windows/amd64)
+2409949
+
+Procesadores:                              1 Procesadores 
+instalados.
+Memoria física total:                      7,821 MB
+
+

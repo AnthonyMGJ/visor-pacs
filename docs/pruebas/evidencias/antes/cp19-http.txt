@@ -1,0 +1,5 @@
+﻿--- Backend ---
+HTTP 200
+--- Orthanc ---
+HTTP 401
+Resultado: todo expuesto por HTTP en localhost; sin HTTPS ni dominio (HT02).

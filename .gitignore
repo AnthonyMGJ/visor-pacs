@@ -21,3 +21,5 @@ frontend/dist/
 # Solo se permiten las imágenes sintéticas de la carpeta "sinteticos".
 *.dcm
 !docker/sample-dicom/sinteticos/*.dcm
+
+.claude/
