@@ -5,7 +5,7 @@ Se apaga con `OPENAPI_ENABLED=false`. Este documento resume lo que necesita el f
 
 ## Convenciones
 
-- Autenticación: `Authorization: Bearer <accessToken>` en todo salvo `POST /api/auth/login`, `/actuator/health` y la documentación.
+- Autenticación: `Authorization: Bearer <accessToken>` en todo salvo `POST /api/auth/login`, `POST /api/auth/olvide-clave`, `POST /api/auth/restablecer-clave`, `/actuator/health` y la documentación.
 - Roles: `MEDICO`, `PACIENTE`, `ADMIN`. El ADMIN gestiona cuentas, permisos y auditoría; **nunca ve imágenes**.
 - Errores: siempre `application/problem+json` con `type`, `title`, `status`, `detail`, `instance`.
   Los de validación (400) añaden `errores: [{ campo, mensaje }]` (nunca el valor enviado).
@@ -29,6 +29,8 @@ Se apaga con `OPENAPI_ENABLED=false`. Este documento resume lo que necesita el f
 | Método y ruta | Rol | Descripción |
 |---|---|---|
 | `POST /api/auth/login` `{username,password}` | público | `200 {accessToken, tokenType:"Bearer", expiresIn:900, rol, nombre, debeCambiarClave}`. `429` si la IP agotó su cupo |
+| `POST /api/auth/olvide-clave` `{email}` | público | **RF-09.** `202 {mensaje}` **siempre igual**, exista o no el correo (la respuesta, el texto y el tiempo no distinguen). Solo MEDICO y PACIENTE activos reciben el correo (ADMIN excluido). `429` por IP (`Retry-After`). `404` si la función está apagada (`RECUPERACION_HABILITADA=false`, valor por defecto). Máx. 3 correos por cuenta y hora (el 4.º responde igual pero no envía). El correo se envía en segundo plano |
+| `POST /api/auth/restablecer-clave` `{token,claveNueva}` | público | **RF-09.** `200 {mensaje}`. **No inicia sesión.** `400` «Enlace no válido» (vencido, ya usado, desconocido o cuenta no elegible; sin más pistas) o clave de menos de 12 caracteres / igual a la actual (el enlace **no** se gasta). Cierra todas las sesiones de la cuenta, anula otros enlaces y levanta el bloqueo. `429` por IP; `404` si está apagada. El token (256 bits, un solo uso, 15 min) llega en el **fragmento** del enlace: `<FRONTEND_URL>/nueva-clave#token=…` |
 | `POST /api/auth/renovar` | cualquiera | `200` con un token nuevo (misma forma que login). **`401` si la sesión superó el tope absoluto** (8 h desde el inicio de sesión con clave): hay que volver a escribir la clave |
 | `POST /api/auth/cambiar-clave` `{claveActual,claveNueva}` | cualquiera | `200` con token nuevo. Clave de 12+ caracteres y distinta de la actual. Clave actual incorrecta → **`400`** (no 401) y cuenta como intento fallido (puede acabar en `423`). Cierra las demás sesiones |
 | `POST /api/auth/logout` | cualquiera | `204`. **Revoca todos los tokens de la cuenta** |

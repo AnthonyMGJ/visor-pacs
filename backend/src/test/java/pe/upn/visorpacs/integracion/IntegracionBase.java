@@ -32,7 +32,10 @@ import pe.upn.visorpacs.usuario.UsuarioService;
 @AutoConfigureMockMvc
 // El límite de inicios de sesión por IP queda prácticamente apagado: todas las pruebas entran desde la misma IP.
 // LimiteLoginIT lo vuelve a fijar en un valor bajo para probarlo.
-@TestPropertySource(properties = "app.limite-login.max-solicitudes=100000")
+@TestPropertySource(properties = {"app.limite-login.max-solicitudes=100000",
+        // RF-09 encendido en las pruebas (en el producto va apagado). El límite por IP queda alto; LimiteRecuperacionIT lo baja.
+        "app.recuperacion.habilitada=true", "app.recuperacion.max-por-ip=100000",
+        "app.recuperacion.frontend-url=http://app.test"})
 abstract class IntegracionBase {
 
     protected static final String CLAVE = "Clave-de-prueba-123";

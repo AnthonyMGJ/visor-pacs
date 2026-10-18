@@ -7,7 +7,7 @@ services:
   mysql:
     image: mysql:8.4
     restart: unless-stopped
-    # Necesario para crear los triggers de la auditoría (V5) con el registro binario activo.
+    # Necesario para crear los triggers de la auditorÃ­a (V5) con el registro binario activo.
     command: ["--log-bin-trust-function-creators=1"]
     environment:
       MYSQL_DATABASE: ${DB_NAME:-visor_pacs}
@@ -16,7 +16,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Falta DB_ROOT_PASSWORD en .env}
       TZ: UTC
     ports:
-      - "127.0.0.1:3306:3306"   # solo accesible desde tu propia máquina
+      - "127.0.0.1:3306:3306"   # solo accesible desde tu propia mÃ¡quina
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -28,8 +28,8 @@ services:
     networks: [pacs-net]
 
   orthanc:
-    # TODO (equipo): fijar una versión concreta después de la primera corrida exitosa
-    # (por ejemplo, orthancteam/orthanc:<versión>), para que todos usen la misma.
+    # TODO (equipo): fijar una versiÃ³n concreta despuÃ©s de la primera corrida exitosa
+    # (por ejemplo, orthancteam/orthanc:<versiÃ³n>), para que todos usen la misma.
     image: orthancteam/orthanc:latest
     restart: unless-stopped
     environment:
@@ -43,7 +43,7 @@ services:
           "DicomWeb": { "Enable": true, "Root": "/dicom-web/" }
         }
     ports:
-      - "127.0.0.1:8042:8042"   # solo tu máquina; el celular NUNCA habla directo con Orthanc
+      - "127.0.0.1:8042:8042"   # solo tu mÃ¡quina; el celular NUNCA habla directo con Orthanc
     volumes:
       - orthanc_data:/var/lib/orthanc/db
     networks: [pacs-net]
@@ -78,9 +78,31 @@ services:
       OPENAPI_ENABLED: ${OPENAPI_ENABLED:-true}
       SESION_DURACION_MAXIMA_HORAS: ${SESION_DURACION_MAXIMA_HORAS:-8}
       LIMITE_LOGIN_MAX: ${LIMITE_LOGIN_MAX:-30}
+      # RF-09 (recuperaciÃ³n de clave por correo). Apagado por defecto.
+      RECUPERACION_HABILITADA: ${RECUPERACION_HABILITADA:-false}
+      RECUPERACION_MAX_CUENTA_HORA: ${RECUPERACION_MAX_CUENTA_HORA:-3}
+      RECUPERACION_MAX_IP: ${RECUPERACION_MAX_IP:-10}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_AUTH: ${SMTP_AUTH:-false}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      SMTP_REMITENTE: ${SMTP_REMITENTE:-no-reply@localhost}
       LIMITE_LOGIN_VENTANA_SEGUNDOS: ${LIMITE_LOGIN_VENTANA_SEGUNDOS:-60}
     ports:
       - "8080:8080"             # accesible desde la red Wi-Fi para probar con el celular
+    networks: [pacs-net]
+
+  # BuzÃ³n de pruebas para RF-09 (NO envÃ­a correos reales). Solo con el perfil "correo-dev":
+  #   docker compose --profile correo-dev up -d      -> bandeja en http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    profiles: ["correo-dev"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8025:8025"   # bandeja web, solo tu mÃ¡quina
     networks: [pacs-net]
 
   # frontend:  (se agrega en cuanto exista el proyecto React)

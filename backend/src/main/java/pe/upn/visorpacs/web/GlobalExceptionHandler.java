@@ -23,6 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import pe.upn.visorpacs.auth.AccountLockedException;
+import pe.upn.visorpacs.recuperacion.TokenRecuperacionInvalidoException;
 import pe.upn.visorpacs.auth.ClaveActualIncorrectaException;
 import pe.upn.visorpacs.auth.InvalidCredentialsException;
 import pe.upn.visorpacs.auth.SesionNoVigenteException;
@@ -56,6 +57,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ClaveActualIncorrectaException.class)
     public ProblemDetail claveActualIncorrecta(ClaveActualIncorrectaException ex) {
         return problema(HttpStatus.BAD_REQUEST, "Clave actual incorrecta", ex.getMessage());
+    }
+
+    @ExceptionHandler(TokenRecuperacionInvalidoException.class)
+    public ProblemDetail enlaceRecuperacionInvalido(TokenRecuperacionInvalidoException ex) {
+        return problema(HttpStatus.BAD_REQUEST, "Enlace no válido", ex.getMessage());
     }
 
     @ExceptionHandler(SesionNoVigenteException.class)

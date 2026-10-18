@@ -10,6 +10,9 @@ spring:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:visor_pacs}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+    hikari:
+      # Cada solicitud usa una sola conexión; 20 alcanzan para decenas de inicios de sesión simultáneos (D-19).
+      maximum-pool-size: ${DB_POOL_MAX:20}
   jpa:
     open-in-view: false
     hibernate:
@@ -21,6 +24,18 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  # RF-09: correo saliente. Los tiempos de espera evitan que un SMTP lento retenga hilos (el envío ya es asíncrono).
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${SMTP_AUTH:false}
+      mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 10000
+      mail.smtp.writetimeout: 10000
 
 server:
   port: 8080
@@ -31,6 +46,9 @@ server:
     include-stacktrace: never
 
 management:
+  health:
+    mail:
+      enabled: false   # un SMTP caído no debe poner el servicio en DOWN
   endpoints:
     web:
       exposure:
@@ -59,6 +77,15 @@ app:
     # Solicitudes de inicio de sesión por IP dentro de la ventana (0 = sin límite). Responde 429.
     max-solicitudes: ${LIMITE_LOGIN_MAX:30}
     ventana-segundos: ${LIMITE_LOGIN_VENTANA_SEGUNDOS:60}
+  recuperacion:
+    # RF-09. Apagado por defecto: los endpoints responden 404 y el login no muestra el enlace.
+    habilitada: ${RECUPERACION_HABILITADA:false}
+    vigencia-minutos: ${RECUPERACION_VIGENCIA_MINUTOS:15}
+    max-por-cuenta-hora: ${RECUPERACION_MAX_CUENTA_HORA:3}
+    max-por-ip: ${RECUPERACION_MAX_IP:10}
+    ventana-ip-segundos: ${RECUPERACION_VENTANA_IP_SEGUNDOS:3600}
+    frontend-url: ${FRONTEND_URL:http://localhost:5173}
+    remitente: ${SMTP_REMITENTE:no-reply@localhost}
   auditoria:
     # La apertura de un estudio se registra una vez por usuario y estudio dentro de esta ventana.
     apertura-ventana-minutos: ${AUDITORIA_VENTANA_MINUTOS:15}

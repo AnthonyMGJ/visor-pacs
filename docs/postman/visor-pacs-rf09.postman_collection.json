@@ -1,0 +1,757 @@
+{
+  "info": {
+    "name": "Visor PACS - RF-09 (recuperacion de clave por correo)",
+    "description": "Requiere: RECUPERACION_HABILITADA=true, Mailpit en marcha (docker compose --profile correo-dev up -d) y un ADMIN (BOOTSTRAP_ADMIN_*). Crea un medico unico por corrida con correo @example.test (Mailpit lo captura; no sale ningun correo real). Ejecutar TODO en orden con una pausa entre peticiones: newman run <archivo> --delay-request 1500. NO se ha ejecutado todavia: validar en tu maquina.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 ADMIN: login -> 200 y guarda token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{adminUsername}}\", \"password\": \"{{adminPassword}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const u = 'qa.' + Date.now().toString(36);",
+              "pm.collectionVariables.set('qaUsuario', u);",
+              "pm.collectionVariables.set('qaEmail', u + '@example.test');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('tokenAdmin', pm.response.json().accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 ADMIN crea un medico de prueba con correo @example.test -> 201",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/usuarios",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "usuarios"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"{{qaUsuario}}\",\"clave\":\"{{claveVieja}}\",\"nombres\":\"QA\",\"apellidos\":\"Recuperacion\",\"email\":\"{{qaEmail}}\",\"rol\":\"MEDICO\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 CP-21/22 correo NO registrado -> 202 con mensaje generico y rapido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/olvide-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "olvide-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"nadie.{{qaUsuario}}@example.test\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));",
+              "pm.collectionVariables.set('mensajeDesconocido', pm.response.json().mensaje);",
+              "pm.test('responde en menos de 1 s (CA09.12)', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 CP-21 correo registrado -> 202 con el MISMO mensaje y rapido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/olvide-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "olvide-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{qaEmail}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));",
+              "pm.test('mismo mensaje que con un correo inexistente', () => pm.expect(pm.response.json().mensaje).to.eql(pm.collectionVariables.get('mensajeDesconocido')));",
+              "pm.test('responde en menos de 1 s (CA09.12)', () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Mailpit: busca el correo del medico",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{mailpitUrl}}/api/v1/search?query=to:{{qaEmail}}",
+          "host": [
+            "{{mailpitUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "query",
+              "value": "to:{{qaEmail}}"
+            }
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Mailpit recibe el correo de forma asíncrona: se espera un instante antes de consultar la bandeja.",
+              "setTimeout(function () {}, 1500);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const m = pm.response.json().messages;",
+              "pm.test('llego exactamente 1 correo', () => pm.expect(m.length).to.eql(1));",
+              "pm.collectionVariables.set('mailId', m[0].ID);",
+              "pm.test('el asunto no lleva el token', () => pm.expect(m[0].Subject).to.not.match(/token/i));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Mailpit: lee el enlace y extrae el token (va en el fragmento #)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{mailpitUrl}}/api/v1/message/{{mailId}}",
+          "host": [
+            "{{mailpitUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "message",
+            "{{mailId}}"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const texto = pm.response.json().Text;",
+              "const f = texto.match(/\\/nueva-clave#token=([A-Za-z0-9_-]+)/);",
+              "pm.test('el enlace usa /nueva-clave#token= (no ?token=)', () => pm.expect(f).to.not.be.null);",
+              "pm.test('token de 43 caracteres (256 bits)', () => pm.expect(f[1].length).to.eql(43));",
+              "pm.test('el correo no contiene la clave', () => pm.expect(texto).to.not.include(pm.collectionVariables.get('claveVieja')));",
+              "pm.collectionVariables.set('tokenRecuperacion', f[1]);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 CP-23 clave debil -> 400 y el enlace NO se gasta",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"token\":\"{{tokenRecuperacion}}\",\"claveNueva\":\"corta\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 CP-24 restablecer con el enlace -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"token\":\"{{tokenRecuperacion}}\",\"claveNueva\":\"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('no inicia sesion (no devuelve accessToken)', () => pm.expect(pm.response.json().accessToken).to.be.undefined);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 CP-25 el mismo enlace otra vez -> 400 'Enlace no valido'",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"token\":\"{{tokenRecuperacion}}\",\"claveNueva\":\"Tercera-clave-789\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('titulo Enlace no valido', () => pm.expect(pm.response.json().title).to.eql('Enlace no válido'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 la clave VIEJA ya no entra -> 401",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"{{qaUsuario}}\",\"password\":\"{{claveVieja}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 la clave NUEVA entra -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"{{qaUsuario}}\",\"password\":\"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 CP-27 token inventado -> 400 sin pistas",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/restablecer-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "restablecer-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"token\":\"token-inventado-0123456789\",\"claveNueva\":\"{{claveNueva}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('mensaje generico', () => pm.expect(pm.response.json().detail).to.eql('El enlace no es válido o ya venció. Solicita uno nuevo.'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 CP-26 2.a solicitud en la hora -> 202",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/olvide-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "olvide-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{qaEmail}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 CP-26 3.a solicitud en la hora -> 202",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/olvide-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "olvide-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{qaEmail}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 CP-26 4.a solicitud en la hora -> 202 (misma respuesta, sin correo)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/olvide-clave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "olvide-clave"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"{{qaEmail}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 CP-26 Mailpit: solo 3 correos de enlace (el 4.o no se envio)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{mailpitUrl}}/api/v1/search?query=to:{{qaEmail}}%20subject:Restablecer",
+          "host": [
+            "{{mailpitUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "query",
+              "value": "to:{{qaEmail}}%20subject:Restablecer"
+            }
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Mailpit recibe el correo de forma asíncrona: se espera un instante antes de consultar la bandeja.",
+              "setTimeout(function () {}, 1500);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('exactamente 3 correos de enlace', () => pm.expect(pm.response.json().messages.length).to.eql(3));"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "mailpitUrl",
+      "value": "http://localhost:8025"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin.demo"
+    },
+    {
+      "key": "adminPassword",
+      "value": "PON_AQUI_LA_CLAVE_DEL_ADMIN"
+    },
+    {
+      "key": "claveVieja",
+      "value": "Clave-QA-vieja-12345"
+    },
+    {
+      "key": "claveNueva",
+      "value": "Clave-QA-nueva-67890"
+    },
+    {
+      "key": "qaUsuario",
+      "value": ""
+    },
+    {
+      "key": "qaEmail",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "mailId",
+      "value": ""
+    },
+    {
+      "key": "tokenRecuperacion",
+      "value": ""
+    },
+    {
+      "key": "mensajeDesconocido",
+      "value": ""
+    }
+  ]
+}

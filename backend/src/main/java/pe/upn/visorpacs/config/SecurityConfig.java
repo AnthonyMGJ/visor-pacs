@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,9 +29,12 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable) // API sin sesión: el token va en el header Authorization
             .cors(c -> c.configurationSource(cors))
+            .headers(h -> h.referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                // RF-09: sin sesión (quien olvidó la clave no puede tenerla). Con la función apagada responden 404.
+                .requestMatchers(HttpMethod.POST, "/api/auth/olvide-clave", "/api/auth/restablecer-clave").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/health/**", "/error").permitAll()
                 // Documentación de la API (se puede apagar con OPENAPI_ENABLED=false: entonces responde 404).
                 .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
